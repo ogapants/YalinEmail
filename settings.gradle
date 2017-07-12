@@ -1,0 +1,1 @@
+include ':app', ':android-bitmap', ':android-chips', ':android-common', ':android-emailcommon', ':android-photoviewer', ':android-unifiedemail'
