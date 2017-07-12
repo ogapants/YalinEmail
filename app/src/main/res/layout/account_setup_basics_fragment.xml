@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2011 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2011 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,41 +13,42 @@
      limitations under the License.
 -->
 
-<!-- Common data-entry area of initial account setup screen - email, password, default check -->
-<!-- small screen version -->
-<LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
+<!-- Common data-entry area of initial account setup screen - email, password, default check --><!-- small screen version -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
     <!-- We don't want the keyboard up when the user arrives in this initial screen -->
     <View
-            android:layout_height="0dp"
-            android:layout_width="0dp"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:contentDescription="@null"
-            android:importantForAccessibility="no" >
-        <requestFocus/>
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:contentDescription="@null"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:importantForAccessibility="no">
+
+        <requestFocus />
     </View>
+
     <TextView
-            android:id="@+id/lower_headline"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:text="@string/account_setup_basics_headline"
-            style="@style/account_setup_lower_headline"/>
+        android:id="@+id/lower_headline"
+        style="@style/account_setup_lower_headline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/account_setup_basics_headline" />
+
     <TextView
-            android:id="@+id/instructions"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/accounts_welcome"
-            style="@style/account_setup_info_text" />
+        android:id="@+id/instructions"
+        style="@style/account_setup_info_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/accounts_welcome" />
+
     <EditText
-            android:id="@+id/account_email"
-            android:hint="@string/account_setup_basics_email_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:inputType="textEmailAddress" />
+        android:id="@+id/account_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/account_setup_basics_email_label"
+        android:inputType="textEmailAddress"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 </LinearLayout>

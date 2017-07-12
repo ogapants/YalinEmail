@@ -171,33 +171,41 @@ public class EmailProvider extends ContentProvider
 
 
     private static final String PREFERENCE_FRAGMENT_CLASS_NAME =
-            "AccountSettingsFragment";
+            "com.yalin.email.activity.setup.AccountSettingsFragment";
     /**
      * Notifies that changes happened. Certain UI components, e.g., widgets, can register for this
      * {@link Intent} and update accordingly. However, this can be very broad and
      * is NOT the preferred way of getting notification.
      */
     private static final String ACTION_NOTIFY_MESSAGE_LIST_DATASET_CHANGED =
-        "com.yalin.email.MESSAGE_LIST_DATASET_CHANGED";
+            "com.yalin.email.MESSAGE_LIST_DATASET_CHANGED";
 
     private static final String EMAIL_MESSAGE_MIME_TYPE =
-        "vnd.android.cursor.item/email-message";
+            "vnd.android.cursor.item/email-message";
     private static final String EMAIL_ATTACHMENT_MIME_TYPE =
-        "vnd.android.cursor.item/email-attachment";
+            "vnd.android.cursor.item/email-attachment";
 
-    /** Appended to the notification URI for delete operations */
+    /**
+     * Appended to the notification URI for delete operations
+     */
     private static final String NOTIFICATION_OP_DELETE = "delete";
-    /** Appended to the notification URI for insert operations */
+    /**
+     * Appended to the notification URI for insert operations
+     */
     private static final String NOTIFICATION_OP_INSERT = "insert";
-    /** Appended to the notification URI for update operations */
+    /**
+     * Appended to the notification URI for update operations
+     */
     private static final String NOTIFICATION_OP_UPDATE = "update";
 
-    /** The query string to trigger a folder refresh. */
+    /**
+     * The query string to trigger a folder refresh.
+     */
     protected static String QUERY_UIREFRESH = "uirefresh";
 
     // Definitions for our queries looking for orphaned messages
     private static final String[] ORPHANS_PROJECTION
-        = new String[] {MessageColumns._ID, MessageColumns.MAILBOX_KEY};
+            = new String[]{MessageColumns._ID, MessageColumns.MAILBOX_KEY};
     private static final int ORPHANS_ID = 0;
     private static final int ORPHANS_MAILBOX_KEY = 1;
 
@@ -290,6 +298,7 @@ public class EmailProvider extends ContentProvider
     private static final int BASE_SHIFT = 12;  // 12 bits to the base type: 0, 0x1000, 0x2000, etc.
 
     private static final SparseArray<String> TABLE_NAMES;
+
     static {
         SparseArray<String> array = new SparseArray<String>(11);
         array.put(ACCOUNT_BASE >> BASE_SHIFT, Account.TABLE_NAME);
@@ -321,25 +330,25 @@ public class EmailProvider extends ContentProvider
      * Note that this isn't relevant for table creation strings, since they are used only once
      */
     private static final String UPDATED_MESSAGE_INSERT = "insert or ignore into " +
-        Message.UPDATED_TABLE_NAME + " select * from " + Message.TABLE_NAME + " where " +
-        BaseColumns._ID + '=';
+            Message.UPDATED_TABLE_NAME + " select * from " + Message.TABLE_NAME + " where " +
+            BaseColumns._ID + '=';
 
     private static final String UPDATED_MESSAGE_DELETE = "delete from " +
-        Message.UPDATED_TABLE_NAME + " where " + BaseColumns._ID + '=';
+            Message.UPDATED_TABLE_NAME + " where " + BaseColumns._ID + '=';
 
     private static final String DELETED_MESSAGE_INSERT = "insert or replace into " +
-        Message.DELETED_TABLE_NAME + " select * from " + Message.TABLE_NAME + " where " +
-        BaseColumns._ID + '=';
+            Message.DELETED_TABLE_NAME + " select * from " + Message.TABLE_NAME + " where " +
+            BaseColumns._ID + '=';
 
     private static final String ORPHAN_BODY_MESSAGE_ID_SELECT =
             "select " + BodyColumns.MESSAGE_KEY + " from " + Body.TABLE_NAME +
                     " except select " + BaseColumns._ID + " from " + Message.TABLE_NAME;
 
     private static final String DELETE_ORPHAN_BODIES = "delete from " + Body.TABLE_NAME +
-        " where " + BodyColumns.MESSAGE_KEY + " in " + '(' + ORPHAN_BODY_MESSAGE_ID_SELECT + ')';
+            " where " + BodyColumns.MESSAGE_KEY + " in " + '(' + ORPHAN_BODY_MESSAGE_ID_SELECT + ')';
 
     private static final String DELETE_BODY = "delete from " + Body.TABLE_NAME +
-        " where " + BodyColumns.MESSAGE_KEY + '=';
+            " where " + BodyColumns.MESSAGE_KEY + '=';
 
     private static final ContentValues EMPTY_CONTENT_VALUES = new ContentValues();
 
@@ -358,11 +367,12 @@ public class EmailProvider extends ContentProvider
     private static final String[] MIME_TYPE_PROJECTION = new String[]{AttachmentColumns.MIME_TYPE};
 
     private static final String[] CACHED_FILE_QUERY_PROJECTION = new String[]
-            { AttachmentColumns._ID, AttachmentColumns.FILENAME, AttachmentColumns.SIZE,
-                    AttachmentColumns.CONTENT_URI };
+            {AttachmentColumns._ID, AttachmentColumns.FILENAME, AttachmentColumns.SIZE,
+                    AttachmentColumns.CONTENT_URI};
 
     /**
      * Wrap the UriMatcher call so we can throw a runtime exception if an unknown Uri is passed in
+     *
      * @param uri the Uri to match
      * @return the match value
      */
@@ -405,8 +415,9 @@ public class EmailProvider extends ContentProvider
 
     /**
      * Creates a URI string from a database ID (guaranteed to be unique).
+     *
      * @param type of the resource: uifolder, message, etc.
-     * @param id the id of the resource.
+     * @param id   the id of the resource.
      * @return uri string
      */
     public static String uiUriString(String type, long id) {
@@ -415,13 +426,14 @@ public class EmailProvider extends ContentProvider
 
     /**
      * Orphan record deletion utility.  Generates a sqlite statement like:
-     *  delete from <table> where <column> not in (select <foreignColumn> from <foreignTable>)
+     * delete from <table> where <column> not in (select <foreignColumn> from <foreignTable>)
      * Exposed for testing.
-     * @param db the EmailProvider database
-     * @param table the table whose orphans are to be removed
-     * @param column the column deletion will be based on
+     *
+     * @param db            the EmailProvider database
+     * @param table         the table whose orphans are to be removed
+     * @param column        the column deletion will be based on
      * @param foreignColumn the column in the foreign table whose absence will trigger the deletion
-     * @param foreignTable the foreign table
+     * @param foreignTable  the foreign table
      */
     public static void deleteUnlinked(SQLiteDatabase db, String table, String column,
                                       String foreignColumn, String foreignTable) {
@@ -439,6 +451,7 @@ public class EmailProvider extends ContentProvider
      * to set the parentKeys. Two passes are needed because we won't know the parent's Id
      * until that row is inserted, and the order in which the rows are given is arbitrary.
      * If we crash while this operation is in progress, the parent keys can be left uninitialized.
+     *
      * @param db SQLiteDatabase to modify
      */
     private void fixParentKeys(SQLiteDatabase db) {
@@ -553,8 +566,8 @@ public class EmailProvider extends ContentProvider
 
         // If we have accounts, we're done
         if (DatabaseUtils.longForQuery(mainDatabase,
-                                      "SELECT EXISTS (SELECT ? FROM " + Account.TABLE_NAME + " )",
-                                      EmailContent.ID_PROJECTION) > 0) {
+                "SELECT EXISTS (SELECT ? FROM " + Account.TABLE_NAME + " )",
+                EmailContent.ID_PROJECTION) > 0) {
             if (DebugUtils.DEBUG) {
                 LogUtils.w(TAG, "restoreIfNeeded: Account exists.");
             }
@@ -564,7 +577,9 @@ public class EmailProvider extends ContentProvider
         restoreAccounts(context);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void shutdown() {
         if (mDatabase != null) {
@@ -596,7 +611,7 @@ public class EmailProvider extends ContentProvider
                     // If we already know this mailbox doesn't exist, mark the message for deletion
                     if (notFoundMailboxes.contains(mailboxId)) {
                         deleteList.add(c.getLong(ORPHANS_ID));
-                    // If we don't know about this mailbox, we'll try to find it
+                        // If we don't know about this mailbox, we'll try to find it
                     } else if (!foundMailboxes.contains(mailboxId)) {
                         bindArray[0] = Long.toString(mailboxId);
                         Cursor boxCursor = database.query(Mailbox.TABLE_NAME,
@@ -605,7 +620,7 @@ public class EmailProvider extends ContentProvider
                             // If it exists, we'll add it to the "found" mailboxes
                             if (boxCursor.moveToFirst()) {
                                 foundMailboxes.add(mailboxId);
-                            // Otherwise, we'll add to "not found" and mark the message for deletion
+                                // Otherwise, we'll add to "not found" and mark the message for deletion
                             } else {
                                 notFoundMailboxes.add(mailboxId);
                                 deleteList.add(c.getLong(ORPHANS_ID));
@@ -616,7 +631,7 @@ public class EmailProvider extends ContentProvider
                     }
                 }
                 // Now, delete the orphan messages
-                for (long messageId: deleteList) {
+                for (long messageId : deleteList) {
                     bindArray[0] = Long.toString(messageId);
                     database.delete(tableName, WHERE_ID, bindArray);
                 }
@@ -673,8 +688,8 @@ public class EmailProvider extends ContentProvider
                     } finally {
                         findCursor.close();
                     }
-                // These are cases in which one or more Messages might get deleted, either by
-                // cascade or explicitly
+                    // These are cases in which one or more Messages might get deleted, either by
+                    // cascade or explicitly
                 case MAILBOX_ID:
                 case MAILBOX:
                 case ACCOUNT_ID:
@@ -944,7 +959,7 @@ public class EmailProvider extends ContentProvider
                 case QUICK_RESPONSE:
                     longId = db.insert(TABLE_NAMES.valueAt(table), "foo", values);
                     resultUri = ContentUris.withAppendedId(uri, longId);
-                    switch(match) {
+                    switch (match) {
                         case MESSAGE:
                             final long mailboxId = values.getAsLong(MessageColumns.MAILBOX_KEY);
                             if (!uri.getBooleanQueryParameter(IS_UIPROVIDER, false)) {
@@ -1061,7 +1076,8 @@ public class EmailProvider extends ContentProvider
             }
 
             @Override
-            public void onLowMemory() {}
+            public void onLowMemory() {
+            }
         });
 
         MailPrefs.get(context).registerOnSharedPreferenceChangeListener(this);
@@ -1467,7 +1483,7 @@ public class EmailProvider extends ContentProvider
                 case ATTACHMENTS_CACHED_FILE_ACCESS:
                     if (projection == null) {
                         projection =
-                                new String[] {
+                                new String[]{
                                         AttachmentUtilities.Columns._ID,
                                         AttachmentUtilities.Columns.DATA,
                                 };
@@ -1490,16 +1506,13 @@ public class EmailProvider extends ContentProvider
                                 if (AttachmentUtilities.Columns._ID.equals(column)) {
                                     values[i] = c.getLong(
                                             c.getColumnIndexOrThrow(AttachmentColumns._ID));
-                                }
-                                else if (AttachmentUtilities.Columns.DATA.equals(column)) {
+                                } else if (AttachmentUtilities.Columns.DATA.equals(column)) {
                                     values[i] = c.getString(
                                             c.getColumnIndexOrThrow(AttachmentColumns.CONTENT_URI));
-                                }
-                                else if (AttachmentUtilities.Columns.DISPLAY_NAME.equals(column)) {
+                                } else if (AttachmentUtilities.Columns.DISPLAY_NAME.equals(column)) {
                                     values[i] = c.getString(
                                             c.getColumnIndexOrThrow(AttachmentColumns.FILENAME));
-                                }
-                                else if (AttachmentUtilities.Columns.SIZE.equals(column)) {
+                                } else if (AttachmentUtilities.Columns.SIZE.equals(column)) {
                                     values[i] = c.getInt(
                                             c.getColumnIndexOrThrow(AttachmentColumns.SIZE));
                                 } else {
@@ -1512,7 +1525,7 @@ public class EmailProvider extends ContentProvider
                             return ret;
                         }
                     } finally {
-                        if (c !=  null) {
+                        if (c != null) {
                             c.close();
                         }
                     }
@@ -1557,11 +1570,11 @@ public class EmailProvider extends ContentProvider
 
     /**
      * Combine a locally-generated selection with a user-provided selection
-     *
+     * <p>
      * This introduces risk that the local selection might insert incorrect chars
      * into the SQL, so use caution.
      *
-     * @param where locally-generated selection, must not be null
+     * @param where     locally-generated selection, must not be null
      * @param selection user-provided selection, may be null
      * @return a single selection string
      */
@@ -1574,13 +1587,14 @@ public class EmailProvider extends ContentProvider
 
     /**
      * Restore a HostAuth from a database, given its unique id
+     *
      * @param db the database
      * @param id the unique id (_id) of the row
      * @return a fully populated HostAuth or null if the row does not exist
      */
     private static HostAuth restoreHostAuth(SQLiteDatabase db, long id) {
         Cursor c = db.query(HostAuth.TABLE_NAME, HostAuth.CONTENT_PROJECTION,
-                HostAuthColumns._ID + "=?", new String[] {Long.toString(id)}, null, null, null);
+                HostAuthColumns._ID + "=?", new String[]{Long.toString(id)}, null, null, null);
         try {
             if (c.moveToFirst()) {
                 HostAuth hostAuth = new HostAuth();
@@ -1595,8 +1609,9 @@ public class EmailProvider extends ContentProvider
 
     /**
      * Copy the Account and HostAuth tables from one database to another
+     *
      * @param fromDatabase the source database
-     * @param toDatabase the destination database
+     * @param toDatabase   the destination database
      * @return the number of accounts copied, or -1 if an error occurred
      */
     private static int copyAccountTables(SQLiteDatabase fromDatabase, SQLiteDatabase toDatabase) {
@@ -1750,9 +1765,9 @@ public class EmailProvider extends ContentProvider
 
     private static final String MESSAGE_CHANGE_LOG_TABLE_VALUES_PREFIX = ") values (%s, "
             + "(select " + MessageColumns.SERVER_ID + " from " +
-                    Message.TABLE_NAME + " where _id=%s),"
+            Message.TABLE_NAME + " where _id=%s),"
             + "(select " + MessageColumns.ACCOUNT_KEY + " from " +
-                    Message.TABLE_NAME + " where _id=%s),"
+            Message.TABLE_NAME + " where _id=%s),"
             + MessageMove.STATUS_NONE_STRING + ",";
 
     /**
@@ -1766,15 +1781,16 @@ public class EmailProvider extends ContentProvider
             + MessageMove.SRC_FOLDER_SERVER_ID + "," + MessageMove.DST_FOLDER_SERVER_ID
             + MESSAGE_CHANGE_LOG_TABLE_VALUES_PREFIX
             + "(select " + MessageColumns.MAILBOX_KEY +
-                    " from " + Message.TABLE_NAME + " where _id=%s)," + "%d,"
+            " from " + Message.TABLE_NAME + " where _id=%s)," + "%d,"
             + "(select " + Mailbox.SERVER_ID + " from " + Mailbox.TABLE_NAME + " where _id=(select "
             + MessageColumns.MAILBOX_KEY + " from " + Message.TABLE_NAME + " where _id=%s)),"
             + "(select " + Mailbox.SERVER_ID + " from " + Mailbox.TABLE_NAME + " where _id=%d))";
 
     /**
      * Insert a row into the MessageMove table when that message is moved.
-     * @param db The {@link SQLiteDatabase}.
-     * @param messageId The id of the message being moved.
+     *
+     * @param db           The {@link SQLiteDatabase}.
+     * @param messageId    The id of the message being moved.
      * @param dstFolderKey The folder to which the message is being moved.
      */
     private void addToMessageMove(final SQLiteDatabase db, final String messageId,
@@ -1809,7 +1825,7 @@ public class EmailProvider extends ContentProvider
     // group by serverId) where dupes > 1;
     private static final String ACCOUNT_INTEGRITY_SQL =
             "select count(*) from (select count(*) as dupes from " + Mailbox.TABLE_NAME +
-            " where accountKey=? group by " + MailboxColumns.SERVER_ID + ") where dupes > 1";
+                    " where accountKey=? group by " + MailboxColumns.SERVER_ID + ") where dupes > 1";
 
 
     // Query to get the protocol for a message. Temporary to switch between new and old upsync
@@ -1845,14 +1861,15 @@ public class EmailProvider extends ContentProvider
 
     /**
      * Restart push if we need it (currently only for Exchange accounts).
+     *
      * @param context A {@link Context}.
-     * @param db The {@link SQLiteDatabase}.
-     * @param id The id of the thing we're looking for.
+     * @param db      The {@link SQLiteDatabase}.
+     * @param id      The id of the thing we're looking for.
      * @return Whether or not we sent a request to restart the push.
      */
     private static boolean restartPush(final Context context, final SQLiteDatabase db,
                                        final String id) {
-        final Cursor c = db.rawQuery(GET_ACCOUNT_DETAILS, new String[] {id});
+        final Cursor c = db.rawQuery(GET_ACCOUNT_DETAILS, new String[]{id});
         if (c != null) {
             try {
                 if (c.moveToFirst()) {
@@ -1878,9 +1895,10 @@ public class EmailProvider extends ContentProvider
 
     /**
      * Restart push if a mailbox's settings change in a way that requires it.
-     * @param context A {@link Context}.
-     * @param db The {@link SQLiteDatabase}.
-     * @param values The {@link ContentValues} that were updated for the mailbox.
+     *
+     * @param context   A {@link Context}.
+     * @param db        The {@link SQLiteDatabase}.
+     * @param values    The {@link ContentValues} that were updated for the mailbox.
      * @param accountId The id of the account for this mailbox.
      * @return Whether or not the push was restarted.
      */
@@ -1895,9 +1913,10 @@ public class EmailProvider extends ContentProvider
 
     /**
      * Restart push if an account's settings change in a way that requires it.
-     * @param context A {@link Context}.
-     * @param db The {@link SQLiteDatabase}.
-     * @param values The {@link ContentValues} that were updated for the account.
+     *
+     * @param context   A {@link Context}.
+     * @param db        The {@link SQLiteDatabase}.
+     * @param values    The {@link ContentValues} that were updated for the account.
      * @param accountId The id of the account.
      * @return Whether or not the push was restarted.
      */
@@ -1965,7 +1984,7 @@ public class EmailProvider extends ContentProvider
                     int res = 1;
                     Cursor ic = null;
                     try {
-                        ic = db.rawQuery(ACCOUNT_INTEGRITY_SQL, new String[] {id});
+                        ic = db.rawQuery(ACCOUNT_INTEGRITY_SQL, new String[]{id});
                         if (ic.moveToFirst()) {
                             res = ic.getInt(0);
                         }
@@ -2007,7 +2026,7 @@ public class EmailProvider extends ContentProvider
                         boolean isEas = false;
                         long mailboxId = -1;
                         long accountId = -1;
-                        final Cursor c = db.rawQuery(GET_MESSAGE_DETAILS, new String[] {id});
+                        final Cursor c = db.rawQuery(GET_MESSAGE_DETAILS, new String[]{id});
                         if (c != null) {
                             try {
                                 if (c.moveToFirst()) {
@@ -2161,7 +2180,7 @@ public class EmailProvider extends ContentProvider
                                 values.containsKey(BodyColumns.TEXT_CONTENT)) {
                             final long messageIds[];
                             if (values.containsKey(BodyColumns.MESSAGE_KEY)) {
-                                messageIds = new long[] {values.getAsLong(BodyColumns.MESSAGE_KEY)};
+                                messageIds = new long[]{values.getAsLong(BodyColumns.MESSAGE_KEY)};
                             } else if (values.containsKey(BodyColumns._ID)) {
                                 final long bodyId = values.getAsLong(BodyColumns._ID);
                                 final SQLiteStatement sql = db.compileStatement(
@@ -2170,7 +2189,7 @@ public class EmailProvider extends ContentProvider
                                                 " where " + BodyColumns._ID + "=" + Long
                                                 .toString(bodyId)
                                 );
-                                messageIds = new long[] {sql.simpleQueryForLong()};
+                                messageIds = new long[]{sql.simpleQueryForLong()};
                             } else {
                                 final String proj[] = {BodyColumns.MESSAGE_KEY};
                                 final Cursor c = db.query(Body.TABLE_NAME, proj,
@@ -2255,7 +2274,7 @@ public class EmailProvider extends ContentProvider
                     Mailbox.TABLE_NAME,
                     values,
                     WHERE_ID,
-                    new String[] { String.valueOf(id) });
+                    new String[]{String.valueOf(id)});
         }
     }
 
@@ -2321,11 +2340,11 @@ public class EmailProvider extends ContentProvider
     /**
      * Writes message bodies to disk, read from a set of ContentValues
      *
-     * @param c Context for finding files
+     * @param c         Context for finding files
      * @param messageId id of message to write body for
-     * @param cv {@link ContentValues} containing {@link BodyColumns#HTML_CONTENT} and/or
-     *           {@link BodyColumns#TEXT_CONTENT}. Inserting a null or empty value will delete the
-     *           associated text or html body file
+     * @param cv        {@link ContentValues} containing {@link BodyColumns#HTML_CONTENT} and/or
+     *                  {@link BodyColumns#TEXT_CONTENT}. Inserting a null or empty value will delete the
+     *                  associated text or html body file
      * @throws IllegalStateException
      */
     private static void writeBodyFiles(final Context c, final long messageId,
@@ -2353,10 +2372,10 @@ public class EmailProvider extends ContentProvider
     /**
      * Writes a message body file to disk
      *
-     * @param c Context for finding files dir
+     * @param c         Context for finding files dir
      * @param messageId id of message to write body for
-     * @param ext "html" or "txt"
-     * @param content Body content to write to file, or null/empty to delete file
+     * @param ext       "html" or "txt"
+     * @param content   Body content to write to file, or null/empty to delete file
      * @throws IOException
      */
     private static void writeBodyFile(final Context c, final long messageId, final String ext,
@@ -2379,9 +2398,9 @@ public class EmailProvider extends ContentProvider
     /**
      * Returns a {@link File} object pointing to the body content file for the message
      *
-     * @param c Context for finding files dir
+     * @param c         Context for finding files dir
      * @param messageId id of message to locate
-     * @param ext "html" or "txt"
+     * @param ext       "html" or "txt"
      * @return File ready for operating upon
      */
     protected static File getBodyFile(final Context c, final long messageId, final String ext)
@@ -2432,7 +2451,7 @@ public class EmailProvider extends ContentProvider
                 return ParcelFileDescriptor.open(getBodyFile(getContext(), messageKey, "html"),
                         Utilities.parseMode(mode));
             }
-            case BODY_TEXT:{
+            case BODY_TEXT: {
                 final long messageKey = Long.valueOf(uri.getLastPathSegment());
                 return ParcelFileDescriptor.open(getBodyFile(getContext(), messageKey, "txt"),
                         Utilities.parseMode(mode));
@@ -2474,9 +2493,9 @@ public class EmailProvider extends ContentProvider
      * {@link ContentObserver}, observers of <<baseURI>> will receive multiple notifications.
      *
      * @param baseUri The base URI to send notifications to. Must be able to take appended IDs.
-     * @param op Optional operation to be appended to the URI.
-     * @param id If a positive value, the ID to append to the base URI. Otherwise, no ID will be
-     *           appended to the base URI.
+     * @param op      Optional operation to be appended to the URI.
+     * @param id      If a positive value, the ID to append to the base URI. Otherwise, no ID will be
+     *                appended to the base URI.
      */
     private void sendNotifierChange(Uri baseUri, String op, String id) {
         if (baseUri == null) return;
@@ -2489,7 +2508,8 @@ public class EmailProvider extends ContentProvider
         long longId = 0L;
         try {
             longId = Long.valueOf(id);
-        } catch (NumberFormatException ignore) {}
+        } catch (NumberFormatException ignore) {
+        }
         if (longId > 0) {
             notifyUI(baseUri, id);
         } else {
@@ -2569,7 +2589,7 @@ public class EmailProvider extends ContentProvider
     // exposed for testing
     public void injectAttachmentService(final EmailAttachmentService attachmentService) {
         mAttachmentService =
-            attachmentService == null ? DEFAULT_ATTACHMENT_SERVICE : attachmentService;
+                attachmentService == null ? DEFAULT_ATTACHMENT_SERVICE : attachmentService;
     }
 
     private Cursor notificationQuery(final Uri uri) {
@@ -2592,14 +2612,14 @@ public class EmailProvider extends ContentProvider
         SQLiteDatabase db = getDatabase(getContext());
         String mailboxId = uri.getLastPathSegment();
         return db.rawQuery("select max(_id) from Message where mailboxKey=?",
-                new String[] {mailboxId});
+                new String[]{mailboxId});
     }
 
     private Cursor getMailboxMessageCount(Uri uri) {
         SQLiteDatabase db = getDatabase(getContext());
         String mailboxId = uri.getLastPathSegment();
         return db.rawQuery("select count(*) from Message where mailboxKey=?",
-                new String[] {mailboxId});
+                new String[]{mailboxId});
     }
 
     /**
@@ -2607,25 +2627,25 @@ public class EmailProvider extends ContentProvider
      */
 
     private static final String NOT_A_DRAFT_STRING =
-        Integer.toString(DraftType.NOT_A_DRAFT);
+            Integer.toString(DraftType.NOT_A_DRAFT);
 
     private static final String CONVERSATION_FLAGS =
             "CASE WHEN (" + MessageColumns.FLAGS + "&" + Message.FLAG_INCOMING_MEETING_INVITE +
-                ") !=0 THEN " + UIProvider.ConversationFlags.CALENDAR_INVITE +
-                " ELSE 0 END + " +
-            "CASE WHEN (" + MessageColumns.FLAGS + "&" + Message.FLAG_FORWARDED +
-                ") !=0 THEN " + UIProvider.ConversationFlags.FORWARDED +
-                " ELSE 0 END + " +
-             "CASE WHEN (" + MessageColumns.FLAGS + "&" + Message.FLAG_REPLIED_TO +
-                ") !=0 THEN " + UIProvider.ConversationFlags.REPLIED +
-                " ELSE 0 END";
+                    ") !=0 THEN " + UIProvider.ConversationFlags.CALENDAR_INVITE +
+                    " ELSE 0 END + " +
+                    "CASE WHEN (" + MessageColumns.FLAGS + "&" + Message.FLAG_FORWARDED +
+                    ") !=0 THEN " + UIProvider.ConversationFlags.FORWARDED +
+                    " ELSE 0 END + " +
+                    "CASE WHEN (" + MessageColumns.FLAGS + "&" + Message.FLAG_REPLIED_TO +
+                    ") !=0 THEN " + UIProvider.ConversationFlags.REPLIED +
+                    " ELSE 0 END";
 
     /**
      * Array of pre-defined account colors (legacy colors from old email app)
      */
-    private static final int[] ACCOUNT_COLORS = new int[] {
-        0xff71aea7, 0xff621919, 0xff18462f, 0xffbf8e52, 0xff001f79,
-        0xffa8afc2, 0xff6b64c4, 0xff738359, 0xff9d50a4
+    private static final int[] ACCOUNT_COLORS = new int[]{
+            0xff71aea7, 0xff621919, 0xff18462f, 0xffbf8e52, 0xff001f79,
+            0xffa8afc2, 0xff6b64c4, 0xff738359, 0xff9d50a4
     };
 
     private static final String CONVERSATION_COLOR =
@@ -2639,7 +2659,7 @@ public class EmailProvider extends ContentProvider
                     " WHEN 6 THEN " + ACCOUNT_COLORS[6] +
                     " WHEN 7 THEN " + ACCOUNT_COLORS[7] +
                     " WHEN 8 THEN " + ACCOUNT_COLORS[8] +
-            " END";
+                    " END";
 
     private static final String ACCOUNT_COLOR =
             "@CASE (" + AccountColumns._ID + " - 1) % " + ACCOUNT_COLORS.length +
@@ -2652,7 +2672,7 @@ public class EmailProvider extends ContentProvider
                     " WHEN 6 THEN " + ACCOUNT_COLORS[6] +
                     " WHEN 7 THEN " + ACCOUNT_COLORS[7] +
                     " WHEN 8 THEN " + ACCOUNT_COLORS[8] +
-            " END";
+                    " END";
 
     /**
      * Mapping of UIProvider columns to EmailProvider columns for the message list (called the
@@ -2661,52 +2681,53 @@ public class EmailProvider extends ContentProvider
     private static ProjectionMap getMessageListMap() {
         if (sMessageListMap == null) {
             sMessageListMap = ProjectionMap.builder()
-                .add(BaseColumns._ID, MessageColumns._ID)
-                .add(UIProvider.ConversationColumns.URI, uriWithId("uimessage"))
-                .add(UIProvider.ConversationColumns.MESSAGE_LIST_URI, uriWithId("uimessage"))
-                .add(UIProvider.ConversationColumns.SUBJECT, MessageColumns.SUBJECT)
-                .add(UIProvider.ConversationColumns.SNIPPET, MessageColumns.SNIPPET)
-                .add(UIProvider.ConversationColumns.CONVERSATION_INFO, null)
-                .add(UIProvider.ConversationColumns.DATE_RECEIVED_MS, MessageColumns.TIMESTAMP)
-                .add(UIProvider.ConversationColumns.HAS_ATTACHMENTS, MessageColumns.FLAG_ATTACHMENT)
-                .add(UIProvider.ConversationColumns.NUM_MESSAGES, "1")
-                .add(UIProvider.ConversationColumns.NUM_DRAFTS, "0")
-                .add(UIProvider.ConversationColumns.SENDING_STATE,
-                        Integer.toString(ConversationSendingState.OTHER))
-                .add(UIProvider.ConversationColumns.PRIORITY,
-                        Integer.toString(ConversationPriority.LOW))
-                .add(UIProvider.ConversationColumns.READ, MessageColumns.FLAG_READ)
-                .add(UIProvider.ConversationColumns.SEEN, MessageColumns.FLAG_SEEN)
-                .add(UIProvider.ConversationColumns.STARRED, MessageColumns.FLAG_FAVORITE)
-                .add(UIProvider.ConversationColumns.FLAGS, CONVERSATION_FLAGS)
-                .add(UIProvider.ConversationColumns.ACCOUNT_URI,
-                        uriWithColumn("uiaccount", MessageColumns.ACCOUNT_KEY))
-                .add(UIProvider.ConversationColumns.SENDER_INFO, MessageColumns.FROM_LIST)
-                .add(UIProvider.ConversationColumns.ORDER_KEY, MessageColumns.TIMESTAMP)
-                .build();
+                    .add(BaseColumns._ID, MessageColumns._ID)
+                    .add(UIProvider.ConversationColumns.URI, uriWithId("uimessage"))
+                    .add(UIProvider.ConversationColumns.MESSAGE_LIST_URI, uriWithId("uimessage"))
+                    .add(UIProvider.ConversationColumns.SUBJECT, MessageColumns.SUBJECT)
+                    .add(UIProvider.ConversationColumns.SNIPPET, MessageColumns.SNIPPET)
+                    .add(UIProvider.ConversationColumns.CONVERSATION_INFO, null)
+                    .add(UIProvider.ConversationColumns.DATE_RECEIVED_MS, MessageColumns.TIMESTAMP)
+                    .add(UIProvider.ConversationColumns.HAS_ATTACHMENTS, MessageColumns.FLAG_ATTACHMENT)
+                    .add(UIProvider.ConversationColumns.NUM_MESSAGES, "1")
+                    .add(UIProvider.ConversationColumns.NUM_DRAFTS, "0")
+                    .add(UIProvider.ConversationColumns.SENDING_STATE,
+                            Integer.toString(ConversationSendingState.OTHER))
+                    .add(UIProvider.ConversationColumns.PRIORITY,
+                            Integer.toString(ConversationPriority.LOW))
+                    .add(UIProvider.ConversationColumns.READ, MessageColumns.FLAG_READ)
+                    .add(UIProvider.ConversationColumns.SEEN, MessageColumns.FLAG_SEEN)
+                    .add(UIProvider.ConversationColumns.STARRED, MessageColumns.FLAG_FAVORITE)
+                    .add(UIProvider.ConversationColumns.FLAGS, CONVERSATION_FLAGS)
+                    .add(UIProvider.ConversationColumns.ACCOUNT_URI,
+                            uriWithColumn("uiaccount", MessageColumns.ACCOUNT_KEY))
+                    .add(UIProvider.ConversationColumns.SENDER_INFO, MessageColumns.FROM_LIST)
+                    .add(UIProvider.ConversationColumns.ORDER_KEY, MessageColumns.TIMESTAMP)
+                    .build();
         }
         return sMessageListMap;
     }
+
     private static ProjectionMap sMessageListMap;
 
     /**
      * Generate UIProvider draft type; note the test for "reply all" must come before "reply"
      */
     private static final String MESSAGE_DRAFT_TYPE =
-        "CASE WHEN (" + MessageColumns.FLAGS + "&" + Message.FLAG_TYPE_ORIGINAL +
-            ") !=0 THEN " + DraftType.COMPOSE +
-        " WHEN (" + MessageColumns.FLAGS + "&" + Message.FLAG_TYPE_REPLY_ALL +
-            ") !=0 THEN " + DraftType.REPLY_ALL +
-        " WHEN (" + MessageColumns.FLAGS + "&" + Message.FLAG_TYPE_REPLY +
-            ") !=0 THEN " + DraftType.REPLY +
-        " WHEN (" + MessageColumns.FLAGS + "&" + Message.FLAG_TYPE_FORWARD +
-            ") !=0 THEN " + DraftType.FORWARD +
-            " ELSE " + DraftType.NOT_A_DRAFT + " END";
+            "CASE WHEN (" + MessageColumns.FLAGS + "&" + Message.FLAG_TYPE_ORIGINAL +
+                    ") !=0 THEN " + DraftType.COMPOSE +
+                    " WHEN (" + MessageColumns.FLAGS + "&" + Message.FLAG_TYPE_REPLY_ALL +
+                    ") !=0 THEN " + DraftType.REPLY_ALL +
+                    " WHEN (" + MessageColumns.FLAGS + "&" + Message.FLAG_TYPE_REPLY +
+                    ") !=0 THEN " + DraftType.REPLY +
+                    " WHEN (" + MessageColumns.FLAGS + "&" + Message.FLAG_TYPE_FORWARD +
+                    ") !=0 THEN " + DraftType.FORWARD +
+                    " ELSE " + DraftType.NOT_A_DRAFT + " END";
 
     private static final String MESSAGE_FLAGS =
             "CASE WHEN (" + MessageColumns.FLAGS + "&" + Message.FLAG_INCOMING_MEETING_INVITE +
-            ") !=0 THEN " + UIProvider.MessageFlags.CALENDAR_INVITE +
-            " ELSE 0 END";
+                    ") !=0 THEN " + UIProvider.MessageFlags.CALENDAR_INVITE +
+                    " ELSE 0 END";
 
     /**
      * Mapping of UIProvider columns to EmailProvider columns for a detailed message view in
@@ -2715,80 +2736,81 @@ public class EmailProvider extends ContentProvider
     private static ProjectionMap getMessageViewMap() {
         if (sMessageViewMap == null) {
             sMessageViewMap = ProjectionMap.builder()
-                .add(BaseColumns._ID, Message.TABLE_NAME + "." + MessageColumns._ID)
-                .add(UIProvider.MessageColumns.SERVER_ID, SyncColumns.SERVER_ID)
-                .add(UIProvider.MessageColumns.URI, uriWithFQId("uimessage", Message.TABLE_NAME))
-                .add(UIProvider.MessageColumns.CONVERSATION_ID,
-                        uriWithFQId("uimessage", Message.TABLE_NAME))
-                .add(UIProvider.MessageColumns.SUBJECT, MessageColumns.SUBJECT)
-                .add(UIProvider.MessageColumns.SNIPPET, MessageColumns.SNIPPET)
-                .add(UIProvider.MessageColumns.FROM, MessageColumns.FROM_LIST)
-                .add(UIProvider.MessageColumns.TO, MessageColumns.TO_LIST)
-                .add(UIProvider.MessageColumns.CC, MessageColumns.CC_LIST)
-                .add(UIProvider.MessageColumns.BCC, MessageColumns.BCC_LIST)
-                .add(UIProvider.MessageColumns.REPLY_TO, MessageColumns.REPLY_TO_LIST)
-                .add(UIProvider.MessageColumns.DATE_RECEIVED_MS, MessageColumns.TIMESTAMP)
-                .add(UIProvider.MessageColumns.BODY_HTML, null) // Loaded in EmailMessageCursor
-                .add(UIProvider.MessageColumns.BODY_TEXT, null) // Loaded in EmailMessageCursor
-                .add(UIProvider.MessageColumns.REF_MESSAGE_ID, "0")
-                .add(UIProvider.MessageColumns.DRAFT_TYPE, NOT_A_DRAFT_STRING)
-                .add(UIProvider.MessageColumns.APPEND_REF_MESSAGE_CONTENT, "0")
-                .add(UIProvider.MessageColumns.HAS_ATTACHMENTS, MessageColumns.FLAG_ATTACHMENT)
-                .add(UIProvider.MessageColumns.ATTACHMENT_LIST_URI,
-                        uriWithFQId("uiattachments", Message.TABLE_NAME))
-                .add(UIProvider.MessageColumns.ATTACHMENT_BY_CID_URI,
-                        uriWithFQId("uiattachmentbycid", Message.TABLE_NAME))
-                .add(UIProvider.MessageColumns.MESSAGE_FLAGS, MESSAGE_FLAGS)
-                .add(UIProvider.MessageColumns.DRAFT_TYPE, MESSAGE_DRAFT_TYPE)
-                .add(UIProvider.MessageColumns.MESSAGE_ACCOUNT_URI,
-                        uriWithColumn("uiaccount", MessageColumns.ACCOUNT_KEY))
-                .add(UIProvider.MessageColumns.STARRED, MessageColumns.FLAG_FAVORITE)
-                .add(UIProvider.MessageColumns.READ, MessageColumns.FLAG_READ)
-                .add(UIProvider.MessageColumns.SEEN, MessageColumns.FLAG_SEEN)
-                .add(UIProvider.MessageColumns.SPAM_WARNING_STRING, null)
-                .add(UIProvider.MessageColumns.SPAM_WARNING_LEVEL,
-                        Integer.toString(UIProvider.SpamWarningLevel.NO_WARNING))
-                .add(UIProvider.MessageColumns.SPAM_WARNING_LINK_TYPE,
-                        Integer.toString(UIProvider.SpamWarningLinkType.NO_LINK))
-                .add(UIProvider.MessageColumns.VIA_DOMAIN, null)
-                .add(UIProvider.MessageColumns.CLIPPED, "0")
-                .add(UIProvider.MessageColumns.PERMALINK, null)
-                .build();
+                    .add(BaseColumns._ID, Message.TABLE_NAME + "." + MessageColumns._ID)
+                    .add(UIProvider.MessageColumns.SERVER_ID, SyncColumns.SERVER_ID)
+                    .add(UIProvider.MessageColumns.URI, uriWithFQId("uimessage", Message.TABLE_NAME))
+                    .add(UIProvider.MessageColumns.CONVERSATION_ID,
+                            uriWithFQId("uimessage", Message.TABLE_NAME))
+                    .add(UIProvider.MessageColumns.SUBJECT, MessageColumns.SUBJECT)
+                    .add(UIProvider.MessageColumns.SNIPPET, MessageColumns.SNIPPET)
+                    .add(UIProvider.MessageColumns.FROM, MessageColumns.FROM_LIST)
+                    .add(UIProvider.MessageColumns.TO, MessageColumns.TO_LIST)
+                    .add(UIProvider.MessageColumns.CC, MessageColumns.CC_LIST)
+                    .add(UIProvider.MessageColumns.BCC, MessageColumns.BCC_LIST)
+                    .add(UIProvider.MessageColumns.REPLY_TO, MessageColumns.REPLY_TO_LIST)
+                    .add(UIProvider.MessageColumns.DATE_RECEIVED_MS, MessageColumns.TIMESTAMP)
+                    .add(UIProvider.MessageColumns.BODY_HTML, null) // Loaded in EmailMessageCursor
+                    .add(UIProvider.MessageColumns.BODY_TEXT, null) // Loaded in EmailMessageCursor
+                    .add(UIProvider.MessageColumns.REF_MESSAGE_ID, "0")
+                    .add(UIProvider.MessageColumns.DRAFT_TYPE, NOT_A_DRAFT_STRING)
+                    .add(UIProvider.MessageColumns.APPEND_REF_MESSAGE_CONTENT, "0")
+                    .add(UIProvider.MessageColumns.HAS_ATTACHMENTS, MessageColumns.FLAG_ATTACHMENT)
+                    .add(UIProvider.MessageColumns.ATTACHMENT_LIST_URI,
+                            uriWithFQId("uiattachments", Message.TABLE_NAME))
+                    .add(UIProvider.MessageColumns.ATTACHMENT_BY_CID_URI,
+                            uriWithFQId("uiattachmentbycid", Message.TABLE_NAME))
+                    .add(UIProvider.MessageColumns.MESSAGE_FLAGS, MESSAGE_FLAGS)
+                    .add(UIProvider.MessageColumns.DRAFT_TYPE, MESSAGE_DRAFT_TYPE)
+                    .add(UIProvider.MessageColumns.MESSAGE_ACCOUNT_URI,
+                            uriWithColumn("uiaccount", MessageColumns.ACCOUNT_KEY))
+                    .add(UIProvider.MessageColumns.STARRED, MessageColumns.FLAG_FAVORITE)
+                    .add(UIProvider.MessageColumns.READ, MessageColumns.FLAG_READ)
+                    .add(UIProvider.MessageColumns.SEEN, MessageColumns.FLAG_SEEN)
+                    .add(UIProvider.MessageColumns.SPAM_WARNING_STRING, null)
+                    .add(UIProvider.MessageColumns.SPAM_WARNING_LEVEL,
+                            Integer.toString(UIProvider.SpamWarningLevel.NO_WARNING))
+                    .add(UIProvider.MessageColumns.SPAM_WARNING_LINK_TYPE,
+                            Integer.toString(UIProvider.SpamWarningLinkType.NO_LINK))
+                    .add(UIProvider.MessageColumns.VIA_DOMAIN, null)
+                    .add(UIProvider.MessageColumns.CLIPPED, "0")
+                    .add(UIProvider.MessageColumns.PERMALINK, null)
+                    .build();
         }
         return sMessageViewMap;
     }
+
     private static ProjectionMap sMessageViewMap;
 
     /**
      * Generate UIProvider folder capabilities from mailbox flags
      */
     private static final String FOLDER_CAPABILITIES =
-        "CASE WHEN (" + MailboxColumns.FLAGS + "&" + Mailbox.FLAG_ACCEPTS_MOVED_MAIL +
-            ") !=0 THEN " + UIProvider.FolderCapabilities.CAN_ACCEPT_MOVED_MESSAGES +
-            " ELSE 0 END";
+            "CASE WHEN (" + MailboxColumns.FLAGS + "&" + Mailbox.FLAG_ACCEPTS_MOVED_MAIL +
+                    ") !=0 THEN " + UIProvider.FolderCapabilities.CAN_ACCEPT_MOVED_MESSAGES +
+                    " ELSE 0 END";
 
     /**
      * Convert EmailProvider type to UIProvider type
      */
     private static final String FOLDER_TYPE = "CASE " + MailboxColumns.TYPE
-            + " WHEN " + Mailbox.TYPE_INBOX   + " THEN " + UIProvider.FolderType.INBOX
-            + " WHEN " + Mailbox.TYPE_DRAFTS  + " THEN " + UIProvider.FolderType.DRAFT
-            + " WHEN " + Mailbox.TYPE_OUTBOX  + " THEN " + UIProvider.FolderType.OUTBOX
-            + " WHEN " + Mailbox.TYPE_SENT    + " THEN " + UIProvider.FolderType.SENT
-            + " WHEN " + Mailbox.TYPE_TRASH   + " THEN " + UIProvider.FolderType.TRASH
-            + " WHEN " + Mailbox.TYPE_JUNK    + " THEN " + UIProvider.FolderType.SPAM
+            + " WHEN " + Mailbox.TYPE_INBOX + " THEN " + UIProvider.FolderType.INBOX
+            + " WHEN " + Mailbox.TYPE_DRAFTS + " THEN " + UIProvider.FolderType.DRAFT
+            + " WHEN " + Mailbox.TYPE_OUTBOX + " THEN " + UIProvider.FolderType.OUTBOX
+            + " WHEN " + Mailbox.TYPE_SENT + " THEN " + UIProvider.FolderType.SENT
+            + " WHEN " + Mailbox.TYPE_TRASH + " THEN " + UIProvider.FolderType.TRASH
+            + " WHEN " + Mailbox.TYPE_JUNK + " THEN " + UIProvider.FolderType.SPAM
             + " WHEN " + Mailbox.TYPE_STARRED + " THEN " + UIProvider.FolderType.STARRED
             + " WHEN " + Mailbox.TYPE_UNREAD + " THEN " + UIProvider.FolderType.UNREAD
             + " WHEN " + Mailbox.TYPE_SEARCH + " THEN "
-                    + getFolderTypeFromMailboxType(Mailbox.TYPE_SEARCH)
+            + getFolderTypeFromMailboxType(Mailbox.TYPE_SEARCH)
             + " ELSE " + UIProvider.FolderType.DEFAULT + " END";
 
     private static final String FOLDER_ICON = "CASE " + MailboxColumns.TYPE
-            + " WHEN " + Mailbox.TYPE_INBOX   + " THEN " + R.drawable.ic_drawer_inbox_24dp
-            + " WHEN " + Mailbox.TYPE_DRAFTS  + " THEN " + R.drawable.ic_drawer_drafts_24dp
-            + " WHEN " + Mailbox.TYPE_OUTBOX  + " THEN " + R.drawable.ic_drawer_outbox_24dp
-            + " WHEN " + Mailbox.TYPE_SENT    + " THEN " + R.drawable.ic_drawer_sent_24dp
-            + " WHEN " + Mailbox.TYPE_TRASH   + " THEN " + R.drawable.ic_drawer_trash_24dp
+            + " WHEN " + Mailbox.TYPE_INBOX + " THEN " + R.drawable.ic_drawer_inbox_24dp
+            + " WHEN " + Mailbox.TYPE_DRAFTS + " THEN " + R.drawable.ic_drawer_drafts_24dp
+            + " WHEN " + Mailbox.TYPE_OUTBOX + " THEN " + R.drawable.ic_drawer_outbox_24dp
+            + " WHEN " + Mailbox.TYPE_SENT + " THEN " + R.drawable.ic_drawer_sent_24dp
+            + " WHEN " + Mailbox.TYPE_TRASH + " THEN " + R.drawable.ic_drawer_trash_24dp
             + " WHEN " + Mailbox.TYPE_STARRED + " THEN " + R.drawable.ic_drawer_starred_24dp
             + " ELSE " + R.drawable.ic_drawer_folder_24dp + " END";
 
@@ -2808,44 +2830,45 @@ public class EmailProvider extends ContentProvider
     private static ProjectionMap getFolderListMap() {
         if (sFolderListMap == null) {
             sFolderListMap = ProjectionMap.builder()
-                .add(BaseColumns._ID, MailboxColumns._ID)
-                .add(UIProvider.FolderColumns.PERSISTENT_ID, MailboxColumns.SERVER_ID)
-                .add(UIProvider.FolderColumns.URI, uriWithId("uifolder"))
-                .add(UIProvider.FolderColumns.NAME, "displayName")
-                .add(UIProvider.FolderColumns.HAS_CHILDREN,
-                        MailboxColumns.FLAGS + "&" + Mailbox.FLAG_HAS_CHILDREN)
-                .add(UIProvider.FolderColumns.CAPABILITIES, FOLDER_CAPABILITIES)
-                .add(UIProvider.FolderColumns.SYNC_WINDOW, "3")
-                .add(UIProvider.FolderColumns.CONVERSATION_LIST_URI, uriWithId("uimessages"))
-                .add(UIProvider.FolderColumns.CHILD_FOLDERS_LIST_URI, uriWithId("uisubfolders"))
-                .add(UIProvider.FolderColumns.UNREAD_COUNT, MailboxColumns.UNREAD_COUNT)
-                .add(UIProvider.FolderColumns.TOTAL_COUNT, TOTAL_COUNT)
-                .add(UIProvider.FolderColumns.REFRESH_URI, uriWithId(QUERY_UIREFRESH))
-                .add(UIProvider.FolderColumns.SYNC_STATUS, MailboxColumns.UI_SYNC_STATUS)
-                .add(UIProvider.FolderColumns.LAST_SYNC_RESULT, MailboxColumns.UI_LAST_SYNC_RESULT)
-                .add(UIProvider.FolderColumns.TYPE, FOLDER_TYPE)
-                .add(UIProvider.FolderColumns.ICON_RES_ID, FOLDER_ICON)
-                .add(UIProvider.FolderColumns.LOAD_MORE_URI, uriWithId("uiloadmore"))
-                .add(UIProvider.FolderColumns.HIERARCHICAL_DESC, MailboxColumns.HIERARCHICAL_NAME)
-                .add(UIProvider.FolderColumns.PARENT_URI, "case when " + MailboxColumns.PARENT_KEY
-                        + "=" + Mailbox.NO_MAILBOX + " then NULL else " +
-                        uriWithColumn("uifolder", MailboxColumns.PARENT_KEY) + " end")
-                /**
-                 * SELECT group_concat(fromList) FROM
-                 * (SELECT fromList FROM message WHERE mailboxKey=? AND flagRead=0
-                 *  GROUP BY fromList ORDER BY timestamp DESC)
-                 */
-                .add(UIProvider.FolderColumns.UNREAD_SENDERS,
-                        "(SELECT group_concat(" + MessageColumns.FROM_LIST + ") FROM " +
-                        "(SELECT " + MessageColumns.FROM_LIST + " FROM " + Message.TABLE_NAME +
-                        " WHERE " + MessageColumns.MAILBOX_KEY + "=" + Mailbox.TABLE_NAME + "." +
-                        MailboxColumns._ID + " AND " + MessageColumns.FLAG_READ + "=0" +
-                        " GROUP BY " + MessageColumns.FROM_LIST + " ORDER BY " +
-                        MessageColumns.TIMESTAMP + " DESC))")
-                .build();
+                    .add(BaseColumns._ID, MailboxColumns._ID)
+                    .add(UIProvider.FolderColumns.PERSISTENT_ID, MailboxColumns.SERVER_ID)
+                    .add(UIProvider.FolderColumns.URI, uriWithId("uifolder"))
+                    .add(UIProvider.FolderColumns.NAME, "displayName")
+                    .add(UIProvider.FolderColumns.HAS_CHILDREN,
+                            MailboxColumns.FLAGS + "&" + Mailbox.FLAG_HAS_CHILDREN)
+                    .add(UIProvider.FolderColumns.CAPABILITIES, FOLDER_CAPABILITIES)
+                    .add(UIProvider.FolderColumns.SYNC_WINDOW, "3")
+                    .add(UIProvider.FolderColumns.CONVERSATION_LIST_URI, uriWithId("uimessages"))
+                    .add(UIProvider.FolderColumns.CHILD_FOLDERS_LIST_URI, uriWithId("uisubfolders"))
+                    .add(UIProvider.FolderColumns.UNREAD_COUNT, MailboxColumns.UNREAD_COUNT)
+                    .add(UIProvider.FolderColumns.TOTAL_COUNT, TOTAL_COUNT)
+                    .add(UIProvider.FolderColumns.REFRESH_URI, uriWithId(QUERY_UIREFRESH))
+                    .add(UIProvider.FolderColumns.SYNC_STATUS, MailboxColumns.UI_SYNC_STATUS)
+                    .add(UIProvider.FolderColumns.LAST_SYNC_RESULT, MailboxColumns.UI_LAST_SYNC_RESULT)
+                    .add(UIProvider.FolderColumns.TYPE, FOLDER_TYPE)
+                    .add(UIProvider.FolderColumns.ICON_RES_ID, FOLDER_ICON)
+                    .add(UIProvider.FolderColumns.LOAD_MORE_URI, uriWithId("uiloadmore"))
+                    .add(UIProvider.FolderColumns.HIERARCHICAL_DESC, MailboxColumns.HIERARCHICAL_NAME)
+                    .add(UIProvider.FolderColumns.PARENT_URI, "case when " + MailboxColumns.PARENT_KEY
+                            + "=" + Mailbox.NO_MAILBOX + " then NULL else " +
+                            uriWithColumn("uifolder", MailboxColumns.PARENT_KEY) + " end")
+                    /**
+                     * SELECT group_concat(fromList) FROM
+                     * (SELECT fromList FROM message WHERE mailboxKey=? AND flagRead=0
+                     *  GROUP BY fromList ORDER BY timestamp DESC)
+                     */
+                    .add(UIProvider.FolderColumns.UNREAD_SENDERS,
+                            "(SELECT group_concat(" + MessageColumns.FROM_LIST + ") FROM " +
+                                    "(SELECT " + MessageColumns.FROM_LIST + " FROM " + Message.TABLE_NAME +
+                                    " WHERE " + MessageColumns.MAILBOX_KEY + "=" + Mailbox.TABLE_NAME + "." +
+                                    MailboxColumns._ID + " AND " + MessageColumns.FLAG_READ + "=0" +
+                                    " GROUP BY " + MessageColumns.FROM_LIST + " ORDER BY " +
+                                    MessageColumns.TIMESTAMP + " DESC))")
+                    .build();
         }
         return sFolderListMap;
     }
+
     private static ProjectionMap sFolderListMap;
 
     /**
@@ -2870,7 +2893,7 @@ public class EmailProvider extends ContentProvider
                             ("'content://" + EmailContent.AUTHORITY + "/uiundo'"))
                     .add(UIProvider.AccountColumns.URI, uriWithId("uiaccount"))
                     .add(UIProvider.AccountColumns.SEARCH_URI, uriWithId("uisearch"))
-                            // TODO: Is provider version used?
+                    // TODO: Is provider version used?
                     .add(UIProvider.AccountColumns.PROVIDER_VERSION, "1")
                     .add(UIProvider.AccountColumns.SYNC_STATUS, "0")
                     .add(UIProvider.AccountColumns.RECENT_FOLDER_LIST_URI,
@@ -2906,6 +2929,7 @@ public class EmailProvider extends ContentProvider
         }
         return sAccountListMap;
     }
+
     private static ProjectionMap sAccountListMap;
 
     private static ProjectionMap getQuickResponseMap() {
@@ -2919,21 +2943,22 @@ public class EmailProvider extends ContentProvider
         }
         return sQuickResponseMap;
     }
+
     private static ProjectionMap sQuickResponseMap;
 
     /**
      * The "ORDER BY" clause for top level folders
      */
     private static final String MAILBOX_ORDER_BY = "CASE " + MailboxColumns.TYPE
-        + " WHEN " + Mailbox.TYPE_INBOX   + " THEN 0"
-        + " WHEN " + Mailbox.TYPE_DRAFTS  + " THEN 1"
-        + " WHEN " + Mailbox.TYPE_OUTBOX  + " THEN 2"
-        + " WHEN " + Mailbox.TYPE_SENT    + " THEN 3"
-        + " WHEN " + Mailbox.TYPE_TRASH   + " THEN 4"
-        + " WHEN " + Mailbox.TYPE_JUNK    + " THEN 5"
-        // Other mailboxes (i.e. of Mailbox.TYPE_MAIL) are shown in alphabetical order.
-        + " ELSE 10 END"
-        + " ," + MailboxColumns.DISPLAY_NAME + " COLLATE LOCALIZED ASC";
+            + " WHEN " + Mailbox.TYPE_INBOX + " THEN 0"
+            + " WHEN " + Mailbox.TYPE_DRAFTS + " THEN 1"
+            + " WHEN " + Mailbox.TYPE_OUTBOX + " THEN 2"
+            + " WHEN " + Mailbox.TYPE_SENT + " THEN 3"
+            + " WHEN " + Mailbox.TYPE_TRASH + " THEN 4"
+            + " WHEN " + Mailbox.TYPE_JUNK + " THEN 5"
+            // Other mailboxes (i.e. of Mailbox.TYPE_MAIL) are shown in alphabetical order.
+            + " ELSE 10 END"
+            + " ," + MailboxColumns.DISPLAY_NAME + " COLLATE LOCALIZED ASC";
 
     /**
      * Mapping of UIProvider columns to EmailProvider columns for a message's attachments
@@ -2941,25 +2966,27 @@ public class EmailProvider extends ContentProvider
     private static ProjectionMap getAttachmentMap() {
         if (sAttachmentMap == null) {
             sAttachmentMap = ProjectionMap.builder()
-                .add(UIProvider.AttachmentColumns.NAME, AttachmentColumns.FILENAME)
-                .add(UIProvider.AttachmentColumns.SIZE, AttachmentColumns.SIZE)
-                .add(UIProvider.AttachmentColumns.URI, uriWithId("uiattachment"))
-                .add(UIProvider.AttachmentColumns.CONTENT_TYPE, AttachmentColumns.MIME_TYPE)
-                .add(UIProvider.AttachmentColumns.STATE, AttachmentColumns.UI_STATE)
-                .add(UIProvider.AttachmentColumns.DESTINATION, AttachmentColumns.UI_DESTINATION)
-                .add(UIProvider.AttachmentColumns.DOWNLOADED_SIZE,
-                        AttachmentColumns.UI_DOWNLOADED_SIZE)
-                .add(UIProvider.AttachmentColumns.CONTENT_URI, AttachmentColumns.CONTENT_URI)
-                .add(UIProvider.AttachmentColumns.FLAGS, AttachmentColumns.FLAGS)
-                .build();
+                    .add(UIProvider.AttachmentColumns.NAME, AttachmentColumns.FILENAME)
+                    .add(UIProvider.AttachmentColumns.SIZE, AttachmentColumns.SIZE)
+                    .add(UIProvider.AttachmentColumns.URI, uriWithId("uiattachment"))
+                    .add(UIProvider.AttachmentColumns.CONTENT_TYPE, AttachmentColumns.MIME_TYPE)
+                    .add(UIProvider.AttachmentColumns.STATE, AttachmentColumns.UI_STATE)
+                    .add(UIProvider.AttachmentColumns.DESTINATION, AttachmentColumns.UI_DESTINATION)
+                    .add(UIProvider.AttachmentColumns.DOWNLOADED_SIZE,
+                            AttachmentColumns.UI_DOWNLOADED_SIZE)
+                    .add(UIProvider.AttachmentColumns.CONTENT_URI, AttachmentColumns.CONTENT_URI)
+                    .add(UIProvider.AttachmentColumns.FLAGS, AttachmentColumns.FLAGS)
+                    .build();
         }
         return sAttachmentMap;
     }
+
     private static ProjectionMap sAttachmentMap;
 
     /**
      * Generate the SELECT clause using a specified mapping and the original UI projection
-     * @param map the ProjectionMap to use for this projection
+     *
+     * @param map        the ProjectionMap to use for this projection
      * @param projection the projection as sent by UnifiedEmail
      * @return a StringBuilder containing the SELECT expression for a SQLite query
      */
@@ -2971,7 +2998,7 @@ public class EmailProvider extends ContentProvider
                                            ContentValues values) {
         final StringBuilder sb = new StringBuilder("SELECT ");
         boolean first = true;
-        for (final String column: projection) {
+        for (final String column : projection) {
             if (first) {
                 first = false;
             } else {
@@ -3020,7 +3047,7 @@ public class EmailProvider extends ContentProvider
      * Convenience method to create a Uri string given the "type" of query; we append the type
      * of the query and the passed in column name
      *
-     * @param type the "type" of the query, as defined by our UriMatcher definitions
+     * @param type       the "type" of the query, as defined by our UriMatcher definitions
      * @param columnName the column in the table being queried
      * @return a Uri string
      */
@@ -3034,7 +3061,7 @@ public class EmailProvider extends ContentProvider
      * (i.e. including the table name); we need this for join queries where _id would otherwise
      * be ambiguous
      *
-     * @param type the "type" of the query, as defined by our UriMatcher definitions
+     * @param type      the "type" of the query, as defined by our UriMatcher definitions
      * @param tableName the name of the table whose _id is referred to
      * @return a Uri string
      */
@@ -3148,7 +3175,7 @@ public class EmailProvider extends ContentProvider
         StringBuilder sb = genSelect(getMessageViewMap(), uiProjection, values);
         sb.append(" FROM " + Message.TABLE_NAME + " LEFT JOIN " + Body.TABLE_NAME +
                 " ON " + BodyColumns.MESSAGE_KEY + "=" + Message.TABLE_NAME + "." +
-                        MessageColumns._ID +
+                MessageColumns._ID +
                 " WHERE " + Message.TABLE_NAME + "." + MessageColumns._ID + "=?");
         String sql = sb.toString();
         return new MessageQuery(sql, attachmentJson);
@@ -3167,7 +3194,7 @@ public class EmailProvider extends ContentProvider
      * Generate the "message list" SQLite query, given a projection from UnifiedEmail
      *
      * @param uiProjection as passed from UnifiedEmail
-     * @param unseenOnly <code>true</code> to only return unseen messages
+     * @param unseenOnly   <code>true</code> to only return unseen messages
      * @return the SQLite query to be executed on the EmailProvider database
      */
     private static String genQueryMailboxMessages(String[] uiProjection, final boolean unseenOnly) {
@@ -3189,8 +3216,8 @@ public class EmailProvider extends ContentProvider
      * Generate various virtual mailbox SQLite queries, given a projection from UnifiedEmail
      *
      * @param uiProjection as passed from UnifiedEmail
-     * @param mailboxId the id of the virtual mailbox
-     * @param unseenOnly <code>true</code> to only return unseen messages
+     * @param mailboxId    the id of the virtual mailbox
+     * @param unseenOnly   <code>true</code> to only return unseen messages
      * @return the SQLite query to be executed on the EmailProvider database
      */
     private static Cursor getVirtualMailboxMessagesCursor(SQLiteDatabase db, String[] uiProjection,
@@ -3328,7 +3355,7 @@ public class EmailProvider extends ContentProvider
 
         // For trash, we don't allow undo
         if (mailboxType == Mailbox.TYPE_TRASH) {
-            caps =  UIProvider.FolderCapabilities.CAN_ACCEPT_MOVED_MESSAGES |
+            caps = UIProvider.FolderCapabilities.CAN_ACCEPT_MOVED_MESSAGES |
                     UIProvider.FolderCapabilities.ALLOWS_REMOVE_CONVERSATION |
                     UIProvider.FolderCapabilities.DELETE |
                     UIProvider.FolderCapabilities.DELETE_ACTION_FINAL;
@@ -3402,7 +3429,7 @@ public class EmailProvider extends ContentProvider
                             Base64.encodeToString(mailbox.mServerId.getBytes(),
                                     Base64.URL_SAFE | Base64.NO_WRAP | Base64.NO_PADDING));
                 }
-             }
+            }
         }
         StringBuilder sb = genSelect(getFolderListMap(), uiProjection, values);
         sb.append(" FROM " + Mailbox.TABLE_NAME + " WHERE " + MailboxColumns._ID + "=?");
@@ -3509,7 +3536,7 @@ public class EmailProvider extends ContentProvider
      * Generate a "single account" SQLite query, given a projection from UnifiedEmail
      *
      * @param uiProjection as passed from UnifiedEmail
-     * @param id account row ID
+     * @param id           account row ID
      * @return the SQLite query to be executed on the EmailProvider database
      */
     private String genQueryAccount(String[] uiProjection, String id) {
@@ -3687,8 +3714,9 @@ public class EmailProvider extends ContentProvider
 
     /**
      * Generate a Uri string for a combined mailbox uri
+     *
      * @param type the uri command type (e.g. "uimessages")
-     * @param id the id of the item (e.g. an account, mailbox, or message id)
+     * @param id   the id of the item (e.g. an account, mailbox, or message id)
      * @return a Uri string
      */
     private static String combinedUriString(String type, String id) {
@@ -3699,6 +3727,7 @@ public class EmailProvider extends ContentProvider
 
     /**
      * Generate an id for a combined mailbox of a given type
+     *
      * @param type the mailbox type for the combined mailbox
      * @return the id, as a String
      */
@@ -3727,7 +3756,7 @@ public class EmailProvider extends ContentProvider
     }
 
     private static int getVirtualMailboxType(long mailboxId) {
-        return (int)(mailboxId & 0xF);
+        return (int) (mailboxId & 0xF);
     }
 
     private void addCombinedAccountRow(MatrixCursor mc) {
@@ -3753,8 +3782,8 @@ public class EmailProvider extends ContentProvider
         if (colPosMap.containsKey(UIProvider.AccountColumns.CAPABILITIES)) {
             values[colPosMap.get(UIProvider.AccountColumns.CAPABILITIES)] =
                     AccountCapabilities.UNDO |
-                    AccountCapabilities.VIRTUAL_ACCOUNT |
-                    AccountCapabilities.CLIENT_SANITIZED_HTML;
+                            AccountCapabilities.VIRTUAL_ACCOUNT |
+                            AccountCapabilities.CLIENT_SANITIZED_HTML;
         }
         if (colPosMap.containsKey(UIProvider.AccountColumns.FOLDER_LIST_URI)) {
             values[colPosMap.get(UIProvider.AccountColumns.FOLDER_LIST_URI)] =
@@ -3891,8 +3920,8 @@ public class EmailProvider extends ContentProvider
                 if (mailboxType == Mailbox.TYPE_INBOX && accountId == COMBINED_ACCOUNT_ID) {
                     final int unreadCount = EmailContent.count(getContext(), Message.CONTENT_URI,
                             MessageColumns.MAILBOX_KEY + " IN (SELECT " + MailboxColumns._ID
-                            + " FROM " + Mailbox.TABLE_NAME + " WHERE " + MailboxColumns.TYPE
-                            + "=" + Mailbox.TYPE_INBOX + ") AND " + MessageColumns.FLAG_READ + "=0",
+                                    + " FROM " + Mailbox.TABLE_NAME + " WHERE " + MailboxColumns.TYPE
+                                    + "=" + Mailbox.TYPE_INBOX + ") AND " + MessageColumns.FLAG_READ + "=0",
                             null);
                     values[i] = unreadCount;
                 } else if (mailboxType == Mailbox.TYPE_UNREAD) {
@@ -3903,13 +3932,13 @@ public class EmailProvider extends ContentProvider
                         whereArgs = null;
                     } else {
                         accountKeyClause = MessageColumns.ACCOUNT_KEY + "= ? AND ";
-                        whereArgs = new String[] { Long.toString(accountId) };
+                        whereArgs = new String[]{Long.toString(accountId)};
                     }
                     final int unreadCount = EmailContent.count(getContext(), Message.CONTENT_URI,
                             accountKeyClause + MessageColumns.FLAG_READ + "=0 AND "
-                            + MessageColumns.MAILBOX_KEY + " NOT IN (SELECT " + MailboxColumns._ID
-                            + " FROM " + Mailbox.TABLE_NAME + " WHERE " + MailboxColumns.TYPE + "="
-                            + Mailbox.TYPE_TRASH + ")", whereArgs);
+                                    + MessageColumns.MAILBOX_KEY + " NOT IN (SELECT " + MailboxColumns._ID
+                                    + " FROM " + Mailbox.TABLE_NAME + " WHERE " + MailboxColumns.TYPE + "="
+                                    + Mailbox.TYPE_TRASH + ")", whereArgs);
                     values[i] = unreadCount;
                 } else if (mailboxType == Mailbox.TYPE_STARRED) {
                     final String accountKeyClause;
@@ -3919,7 +3948,7 @@ public class EmailProvider extends ContentProvider
                         whereArgs = null;
                     } else {
                         accountKeyClause = MessageColumns.ACCOUNT_KEY + "= ? AND ";
-                        whereArgs = new String[] { Long.toString(accountId) };
+                        whereArgs = new String[]{Long.toString(accountId)};
                     }
                     final int starredCount = EmailContent.count(getContext(), Message.CONTENT_URI,
                             accountKeyClause + MessageColumns.FLAG_FAVORITE + "=1", whereArgs);
@@ -3957,7 +3986,7 @@ public class EmailProvider extends ContentProvider
             while (accountIdCursor.moveToNext()) {
                 final String id = accountIdCursor.getString(0);
                 final Cursor accountCursor =
-                        db.rawQuery(genQueryAccount(uiProjection, id), new String[] {id});
+                        db.rawQuery(genQueryAccount(uiProjection, id), new String[]{id});
                 try {
                     if (accountCursor.moveToNext()) {
                         for (int i = 0; i < uiProjection.length; i++) {
@@ -3987,7 +4016,7 @@ public class EmailProvider extends ContentProvider
         sb.append(" FROM " + QuickResponse.TABLE_NAME);
         sb.append(" WHERE " + QuickResponse.ACCOUNT_KEY + "=?");
         final String query = sb.toString();
-        return db.rawQuery(query, new String[] {account});
+        return db.rawQuery(query, new String[]{account});
     }
 
     private Cursor uiQuickResponseId(String[] uiProjection, String id) {
@@ -3997,7 +4026,7 @@ public class EmailProvider extends ContentProvider
         sb.append(" FROM " + QuickResponse.TABLE_NAME);
         sb.append(" WHERE " + QuickResponse._ID + "=?");
         final String query = sb.toString();
-        return db.rawQuery(query, new String[] {id});
+        return db.rawQuery(query, new String[]{id});
     }
 
     private Cursor uiQuickResponse(String[] uiProjection) {
@@ -4012,9 +4041,9 @@ public class EmailProvider extends ContentProvider
     /**
      * Generate the "attachment list" SQLite query, given a projection from UnifiedEmail
      *
-     * @param uiProjection as passed from UnifiedEmail
+     * @param uiProjection               as passed from UnifiedEmail
      * @param contentTypeQueryParameters list of mimeTypes, used as a filter for the attachments
-     * or null if there are no query parameters
+     *                                   or null if there are no query parameters
      * @return the SQLite query to be executed on the EmailProvider database
      */
     private static String genQueryAttachments(String[] uiProjection,
@@ -4095,7 +4124,7 @@ public class EmailProvider extends ContentProvider
 
     /**
      * @return a fragment of SQL that is the expression which, when evaluated for a particular
-     *      Attachment row, produces the Content URI for the attachment
+     * Attachment row, produces the Content URI for the attachment
      */
     private static String createAttachmentUriColumnSQL() {
         final String uriPrefix = Attachment.ATTACHMENT_PROVIDER_URI_PREFIX;
@@ -4130,7 +4159,8 @@ public class EmailProvider extends ContentProvider
     /**
      * Returns a cursor over all the folders for a specific URI which corresponds to a single
      * account.
-     * @param uri uri to query
+     *
+     * @param uri          uri to query
      * @param uiProjection projection
      * @return query result cursor
      */
@@ -4148,7 +4178,7 @@ public class EmailProvider extends ContentProvider
             return vc;
         } else {
             Cursor c = db.rawQuery(genQueryAccountMailboxes(UIProvider.FOLDERS_PROJECTION),
-                    new String[] {id});
+                    new String[]{id});
             c = getFolderListCursor(c, Long.valueOf(id), uiProjection);
             c.setNotificationUri(context.getContentResolver(), notifyUri);
             if (c.getCount() > 0) {
@@ -4181,6 +4211,7 @@ public class EmailProvider extends ContentProvider
      * Returns an array of the default recent folders for a given URI which is unique for an
      * account. Some accounts might not have default recent folders, in which case an empty array
      * is returned.
+     *
      * @param id account id
      * @return array of URIs
      */
@@ -4192,7 +4223,7 @@ public class EmailProvider extends ContentProvider
             return recentFolders;
         }
         // We search for the types we want, and find corresponding IDs.
-        final String[] idAndType = { BaseColumns._ID, UIProvider.FolderColumns.TYPE };
+        final String[] idAndType = {BaseColumns._ID, UIProvider.FolderColumns.TYPE};
 
         // Sent, Drafts, and Starred are the default recents.
         final StringBuilder sb = genSelect(getFolderListMap(), idAndType);
@@ -4237,7 +4268,8 @@ public class EmailProvider extends ContentProvider
 
     /**
      * Convenience method to create a {@link Folder}
-     * @param context to get a {@link ContentResolver}
+     *
+     * @param context   to get a {@link ContentResolver}
      * @param mailboxId id of the {@link Mailbox} that we want
      * @return the {@link Folder} or null
      */
@@ -4354,11 +4386,12 @@ public class EmailProvider extends ContentProvider
      * Converts a mailbox in a row of the mailboxCursor into a row
      * in the supplied {@link MatrixCursor} in the format required for {@link Folder}.
      * As a convenience, the modified {@link MatrixCursor} is also returned.
-     * @param mc the {@link MatrixCursor} into which the mailbox data will be converted
+     *
+     * @param mc               the {@link MatrixCursor} into which the mailbox data will be converted
      * @param projectionLength the length of the projection for this Cursor
-     * @param mailboxCursor the cursor supplying the mailbox data
-     * @param nameColumn column in the cursor containing the folder name value
-     * @param typeColumn column in the cursor containing the folder type value
+     * @param mailboxCursor    the cursor supplying the mailbox data
+     * @param nameColumn       column in the cursor containing the folder name value
+     * @param typeColumn       column in the cursor containing the folder type value
      * @return the {@link MatrixCursor} containing the transformed data.
      */
     private Cursor getUiFolderCursorRowFromMailboxCursorRow(
@@ -4391,10 +4424,11 @@ public class EmailProvider extends ContentProvider
      * - Persistent id (due to needing to base64 encode it).
      * - Load more uri (due to this varying by account protocol).
      * TODO: This would be better as a CursorWrapper, rather than doing a copy.
-     * @param inputCursor A cursor containing all columns of {@link UIProvider.FolderColumns}.
-     *                    Strictly speaking doesn't need all, but simpler if we assume that.
+     *
+     * @param inputCursor  A cursor containing all columns of {@link UIProvider.FolderColumns}.
+     *                     Strictly speaking doesn't need all, but simpler if we assume that.
      * @param outputCursor A MatrixCursor which this function will populate.
-     * @param accountId The account id for the mailboxes in this query.
+     * @param accountId    The account id for the mailboxes in this query.
      * @param uiProjection The projection specified by the query.
      */
     private void remapFolderCursor(final Cursor inputCursor, final MatrixCursor outputCursor,
@@ -4489,7 +4523,8 @@ public class EmailProvider extends ContentProvider
     /**
      * Returns a {@link String} from Resources corresponding
      * to the {@link UIProvider.FolderType} requested.
-     * @param folderType {@link UIProvider.FolderType} value for the folder
+     *
+     * @param folderType  {@link UIProvider.FolderType} value for the folder
      * @param defaultName a {@link String} to use in case the {@link UIProvider.FolderType}
      *                    provided is not a system folder.
      * @return a {@link String} to use as the display name for the folder
@@ -4530,6 +4565,7 @@ public class EmailProvider extends ContentProvider
     /**
      * Converts a {@link Mailbox} type value to its {@link UIProvider.FolderType}
      * equivalent.
+     *
      * @param mailboxType a {@link Mailbox} type
      * @return a {@link UIProvider.FolderType} value
      */
@@ -4561,6 +4597,7 @@ public class EmailProvider extends ContentProvider
 
     /**
      * Converts a {@link UIProvider.FolderType} type value to its {@link Mailbox} equivalent.
+     *
      * @param folderType a {@link UIProvider.FolderType} type
      * @return a {@link Mailbox} value
      */
@@ -4595,6 +4632,7 @@ public class EmailProvider extends ContentProvider
     /**
      * We need a reasonably full projection for getFolderListCursor to work, but don't always want
      * to do the subquery needed for FolderColumns.UNREAD_SENDERS
+     *
      * @param uiProjection The projection we actually want
      * @return Full projection, possibly with or without FolderColumns.UNREAD_SENDERS
      */
@@ -4610,10 +4648,10 @@ public class EmailProvider extends ContentProvider
     /**
      * Handle UnifiedEmail queries here (dispatched from query())
      *
-     * @param match the UriMatcher match for the original uri passed in from UnifiedEmail
-     * @param uri the original uri passed in from UnifiedEmail
+     * @param match        the UriMatcher match for the original uri passed in from UnifiedEmail
+     * @param uri          the original uri passed in from UnifiedEmail
      * @param uiProjection the projection passed in from UnifiedEmail
-     * @param unseenOnly <code>true</code> to only return unseen messages (where supported)
+     * @param unseenOnly   <code>true</code> to only return unseen messages (where supported)
      * @return the result Cursor
      */
     private Cursor uiQuery(int match, Uri uri, String[] uiProjection, final boolean unseenOnly) {
@@ -4624,7 +4662,7 @@ public class EmailProvider extends ContentProvider
         Cursor c = null;
         String id = uri.getPathSegments().get(1);
         Uri notifyUri = null;
-        switch(match) {
+        switch (match) {
             case UI_ALL_FOLDERS:
                 notifyUri =
                         UIPROVIDER_FOLDERLIST_NOTIFIER.buildUpon().appendEncodedPath(id).build();
@@ -4635,7 +4673,7 @@ public class EmailProvider extends ContentProvider
                 } else {
                     // Return real and virtual mailboxes alike
                     final Cursor rawc = db.rawQuery(genQueryAccountAllMailboxes(uiProjection),
-                            new String[] {id});
+                            new String[]{id});
                     rawc.setNotificationUri(context.getContentResolver(), notifyUri);
                     vc.setNotificationUri(context.getContentResolver(), notifyUri);
                     if (rawc.getCount() > 0) {
@@ -4648,20 +4686,20 @@ public class EmailProvider extends ContentProvider
             case UI_FULL_FOLDERS: {
                 // We need a full projection for getFolderListCursor
                 final String[] folderProjection = folderProjectionFromUiProjection(uiProjection);
-                c = db.rawQuery(genQueryAccountAllMailboxes(folderProjection), new String[] {id});
+                c = db.rawQuery(genQueryAccountAllMailboxes(folderProjection), new String[]{id});
                 c = getFolderListCursor(c, Long.valueOf(id), uiProjection);
                 notifyUri =
                         UIPROVIDER_FOLDERLIST_NOTIFIER.buildUpon().appendEncodedPath(id).build();
                 break;
             }
             case UI_RECENT_FOLDERS:
-                c = db.rawQuery(genQueryRecentMailboxes(uiProjection), new String[] {id});
+                c = db.rawQuery(genQueryRecentMailboxes(uiProjection), new String[]{id});
                 notifyUri = UIPROVIDER_RECENT_FOLDERS_NOTIFIER.buildUpon().appendPath(id).build();
                 break;
             case UI_SUBFOLDERS: {
                 // We need a full projection for getFolderListCursor
                 final String[] folderProjection = folderProjectionFromUiProjection(uiProjection);
-                c = db.rawQuery(genQuerySubfolders(folderProjection), new String[] {id});
+                c = db.rawQuery(genQuerySubfolders(folderProjection), new String[]{id});
                 c = getFolderListCursor(c, Mailbox.getAccountIdForMailbox(context, id),
                         uiProjection);
                 // Get notifications for any folder changes on this account. This is broader than
@@ -4683,7 +4721,7 @@ public class EmailProvider extends ContentProvider
                     c = getVirtualMailboxMessagesCursor(db, uiProjection, mailboxId, unseenOnly);
                 } else {
                     c = db.rawQuery(
-                            genQueryMailboxMessages(uiProjection, unseenOnly), new String[] {id});
+                            genQueryMailboxMessages(uiProjection, unseenOnly), new String[]{id});
                 }
                 notifyUri = UIPROVIDER_CONVERSATION_NOTIFIER.buildUpon().appendPath(id).build();
                 c = new EmailConversationCursor(context, c, folder, mailboxId);
@@ -4694,9 +4732,9 @@ public class EmailProvider extends ContentProvider
                 String attJson = qq.attachmentJson;
                 // With attachments, we have another argument to bind
                 if (attJson != null) {
-                    c = db.rawQuery(sql, new String[] {attJson, id});
+                    c = db.rawQuery(sql, new String[]{attJson, id});
                 } else {
-                    c = db.rawQuery(sql, new String[] {id});
+                    c = db.rawQuery(sql, new String[]{id});
                 }
                 if (c != null) {
                     c = new EmailMessageCursor(getContext(), c, UIProvider.MessageColumns.BODY_HTML,
@@ -4708,12 +4746,12 @@ public class EmailProvider extends ContentProvider
                 final List<String> contentTypeQueryParameters =
                         uri.getQueryParameters(PhotoContract.ContentTypeParameters.CONTENT_TYPE);
                 c = db.rawQuery(genQueryAttachments(uiProjection, contentTypeQueryParameters),
-                        new String[] {id});
+                        new String[]{id});
                 c = new AttachmentsCursor(context, c);
                 notifyUri = UIPROVIDER_ATTACHMENTS_NOTIFIER.buildUpon().appendPath(id).build();
                 break;
             case UI_ATTACHMENT:
-                c = db.rawQuery(genQueryAttachment(uiProjection), new String[] {id});
+                c = db.rawQuery(genQueryAttachment(uiProjection), new String[]{id});
                 notifyUri = UIPROVIDER_ATTACHMENT_NOTIFIER.buildUpon().appendPath(id).build();
                 break;
             case UI_ATTACHMENT_BY_CID:
@@ -4769,12 +4807,12 @@ public class EmailProvider extends ContentProvider
                     addCombinedAccountRow(mc);
                     c = mc;
                 } else {
-                    c = db.rawQuery(genQueryAccount(uiProjection, id), new String[] {id});
+                    c = db.rawQuery(genQueryAccount(uiProjection, id), new String[]{id});
                 }
                 notifyUri = UIPROVIDER_ACCOUNT_NOTIFIER.buildUpon().appendPath(id).build();
                 break;
             case UI_CONVERSATION:
-                c = db.rawQuery(genQueryConversation(uiProjection), new String[] {id});
+                c = db.rawQuery(genQueryConversation(uiProjection), new String[]{id});
                 break;
         }
         if (notifyUri != null) {
@@ -4786,7 +4824,8 @@ public class EmailProvider extends ContentProvider
     /**
      * Convert a UIProvider attachment to an EmailProvider attachment (for sending); we only need
      * a few of the fields
-     * @param uiAtt the UIProvider attachment to convert
+     *
+     * @param uiAtt      the UIProvider attachment to convert
      * @param cachedFile the path to the cached file to
      * @return the EmailProvider attachment
      */
@@ -4836,7 +4875,8 @@ public class EmailProvider extends ContentProvider
 
     /**
      * Given an account name and a mailbox type, return that mailbox, creating it if necessary
-     * @param accountId the account id to use
+     *
+     * @param accountId   the account id to use
      * @param mailboxType the type of mailbox we're trying to find
      * @return the mailbox of the given type for the account in the uri, or null if not found
      */
@@ -4850,14 +4890,15 @@ public class EmailProvider extends ContentProvider
 
     /**
      * Given a mailbox and the content values for a message, create/save the message in the mailbox
+     *
      * @param mailbox the mailbox to use
-     * @param extras the bundle containing the message fields
+     * @param extras  the bundle containing the message fields
      * @return the uri of the newly created message
      * TODO(yph): The following fields are available in extras but unused, verify whether they
-     *     should be respected:
-     *     - UIProvider.MessageColumns.SNIPPET
-     *     - UIProvider.MessageColumns.REPLY_TO
-     *     - UIProvider.MessageColumns.FROM
+     * should be respected:
+     * - UIProvider.MessageColumns.SNIPPET
+     * - UIProvider.MessageColumns.REPLY_TO
+     * - UIProvider.MessageColumns.FROM
      */
     private Uri uiSaveMessage(Message msg, Mailbox mailbox, Bundle extras) {
         final Context context = getContext();
@@ -4887,7 +4928,7 @@ public class EmailProvider extends ContentProvider
         msg.mQuotedTextStartPos = extras.getInt(UIProvider.MessageColumns.QUOTE_START_POS, 0);
         int flags = 0;
         final int draftType = extras.getInt(UIProvider.MessageColumns.DRAFT_TYPE);
-        switch(draftType) {
+        switch (draftType) {
             case DraftType.FORWARD:
                 flags |= Message.FLAG_TYPE_FORWARD;
                 break;
@@ -4932,7 +4973,7 @@ public class EmailProvider extends ContentProvider
         boolean hasUnloadedAttachments = false;
         Bundle attachmentFds =
                 extras.getParcelable(UIProvider.SendOrSaveMethodParamKeys.OPENED_FD_MAP);
-        for (com.android.mail.providers.Attachment uiAtt: uiAtts) {
+        for (com.android.mail.providers.Attachment uiAtt : uiAtts) {
             final Uri attUri = uiAtt.uri;
             if (attUri != null && attUri.getAuthority().equals(EmailContent.AUTHORITY)) {
                 // If it's one of ours, retrieve the attachment and add it to the list
@@ -4989,7 +5030,7 @@ public class EmailProvider extends ContentProvider
             // Delete the body
             ops.add(ContentProviderOperation.newDelete(Body.CONTENT_URI)
                     .withSelection(BodyColumns.MESSAGE_KEY + "=?",
-                            new String[] {Long.toString(msg.mId)})
+                            new String[]{Long.toString(msg.mId)})
                     .build());
             // Add the ops for the message, atts, and body
             msg.addSaveOps(ops);
@@ -5011,7 +5052,7 @@ public class EmailProvider extends ContentProvider
                 if (originalMsg != null) {
                     final ContentValues cv = new ContentValues();
                     flags = originalMsg.mFlags;
-                    switch(draftType) {
+                    switch (draftType) {
                         case DraftType.FORWARD:
                             flags |= Message.FLAG_FORWARDED;
                             break;
@@ -5069,23 +5110,24 @@ public class EmailProvider extends ContentProvider
     private static void putIntegerLongOrBoolean(ContentValues values, String columnName,
                                                 Object value) {
         if (value instanceof Integer) {
-            Integer intValue = (Integer)value;
+            Integer intValue = (Integer) value;
             values.put(columnName, intValue);
         } else if (value instanceof Boolean) {
-            Boolean boolValue = (Boolean)value;
+            Boolean boolValue = (Boolean) value;
             values.put(columnName, boolValue ? 1 : 0);
         } else if (value instanceof Long) {
-            Long longValue = (Long)value;
+            Long longValue = (Long) value;
             values.put(columnName, longValue);
         }
     }
 
     /**
      * Update the timestamps for the folders specified and notifies on the recent folder URI.
+     *
      * @param folders array of folder Uris to update
      * @return number of folders updated
      */
-    private int updateTimestamp(final Context context, String id, Uri[] folders){
+    private int updateTimestamp(final Context context, String id, Uri[] folders) {
         int updated = 0;
         final long now = System.currentTimeMillis();
         final ContentResolver resolver = context.getContentResolver();
@@ -5105,7 +5147,8 @@ public class EmailProvider extends ContentProvider
     /**
      * Updates the recent folders. The values to be updated are specified as ContentValues pairs
      * of (Folder URI, access timestamp). Returns nonzero if successful, always.
-     * @param uri provider query uri
+     *
+     * @param uri    provider query uri
      * @param values uri, timestamp pairs
      * @return nonzero value always.
      */
@@ -5123,6 +5166,7 @@ public class EmailProvider extends ContentProvider
 
     /**
      * Populates the recent folders according to the design.
+     *
      * @param uri provider query uri
      * @return the number of recent folders were populated.
      */
@@ -5213,7 +5257,7 @@ public class EmailProvider extends ContentProvider
         if (ourUri == null) return 0;
         ContentValues ourValues = new ContentValues();
         // This should only be called via update to "recent folders"
-        for (String columnName: uiValues.keySet()) {
+        for (String columnName : uiValues.keySet()) {
             if (columnName.equals(MailboxColumns.LAST_TOUCHED_TIME)) {
                 ourValues.put(MailboxColumns.LAST_TOUCHED_TIME, uiValues.getAsLong(columnName));
             }
@@ -5244,7 +5288,7 @@ public class EmailProvider extends ContentProvider
         final ContentValues values = new ContentValues(1);
         values.put(MessageColumns.FLAG_SEEN, 1);
         final String whereClause = MessageColumns.MAILBOX_KEY + " = ?";
-        final String[] whereArgs = new String[] {mailboxId};
+        final String[] whereArgs = new String[]{mailboxId};
 
         return db.update(table, values, whereClause, whereArgs);
     }
@@ -5317,8 +5361,9 @@ public class EmailProvider extends ContentProvider
     /**
      * Add an undo operation for the current sequence; if the sequence is newer than what we've had,
      * clear out the undo list and start over
+     *
      * @param uri the uri we're working on
-     * @param op the ContentProviderOperation to perform upon undo
+     * @param op  the ContentProviderOperation to perform upon undo
      */
     private void addToSequence(Uri uri, ContentProviderOperation op) {
         String sequenceString = uri.getQueryParameter(UIProvider.SEQUENCE_QUERY_PARAMETER);
@@ -5357,7 +5402,7 @@ public class EmailProvider extends ContentProvider
         if (mailbox == null) return 0;
         Uri ourBaseUri =
                 (forceSync || uploadsToServer(context, mailbox)) ? Message.SYNCED_CONTENT_URI :
-                    Message.CONTENT_URI;
+                        Message.CONTENT_URI;
         Uri ourUri = convertToEmailProviderUri(uri, ourBaseUri, true);
         if (ourUri == null) return 0;
 
@@ -5391,7 +5436,7 @@ public class EmailProvider extends ContentProvider
 
         ContentValues undoValues = new ContentValues();
         ContentValues ourValues = convertUiMessageValues(msg, values);
-        for (String columnName: ourValues.keySet()) {
+        for (String columnName : ourValues.keySet()) {
             if (columnName.equals(MessageColumns.MAILBOX_KEY)) {
                 undoValues.put(MessageColumns.MAILBOX_KEY, msg.mMailboxKey);
             } else if (columnName.equals(MessageColumns.FLAG_READ)) {
@@ -5423,15 +5468,16 @@ public class EmailProvider extends ContentProvider
      * Projection for use with getting mailbox & account keys for a message.
      */
     private static final String[] MESSAGE_KEYS_PROJECTION =
-            { MessageColumns.MAILBOX_KEY, MessageColumns.ACCOUNT_KEY };
+            {MessageColumns.MAILBOX_KEY, MessageColumns.ACCOUNT_KEY};
     private static final int MESSAGE_KEYS_MAILBOX_KEY_COLUMN = 0;
     private static final int MESSAGE_KEYS_ACCOUNT_KEY_COLUMN = 1;
 
     /**
      * Notify necessary UI components in response to a message update.
-     * @param uri The {@link Uri} for this message update.
+     *
+     * @param uri       The {@link Uri} for this message update.
      * @param messageId The id of the message that's been updated.
-     * @param values The {@link ContentValues} that were updated in the message.
+     * @param values    The {@link ContentValues} that were updated in the message.
      */
     private void handleMessageUpdateNotifications(final Uri uri, final String messageId,
                                                   final ContentValues values) {
@@ -5460,6 +5506,7 @@ public class EmailProvider extends ContentProvider
 
     /**
      * Perform a "Delete" operation
+     *
      * @param uri message to delete
      * @return number of rows affected
      */
@@ -5493,6 +5540,7 @@ public class EmailProvider extends ContentProvider
 
     /**
      * Hard delete all synced messages in a particular mailbox
+     *
      * @param uri Mailbox to empty (Trash, or maybe Spam/Junk later)
      * @return number of rows affected
      */
@@ -5503,7 +5551,7 @@ public class EmailProvider extends ContentProvider
 
         // Find the account ID (needed in a few calls)
         final Cursor mailboxCursor = db.query(
-                Mailbox.TABLE_NAME, new String[] { MailboxColumns.ACCOUNT_KEY },
+                Mailbox.TABLE_NAME, new String[]{MailboxColumns.ACCOUNT_KEY},
                 Mailbox._ID + "=" + mailboxId, null, null, null, null);
         if (mailboxCursor == null || !mailboxCursor.moveToFirst()) {
             LogUtils.wtf(LogUtils.TAG, "Null or empty cursor when trying to purge mailbox %d",
@@ -5515,7 +5563,7 @@ public class EmailProvider extends ContentProvider
 
         // Find all the messages in the mailbox
         final String[] messageProjection =
-                new String[] { MessageColumns._ID };
+                new String[]{MessageColumns._ID};
         final String messageWhere = MessageColumns.MAILBOX_KEY + "=" + mailboxId;
         final Cursor messageCursor = db.query(Message.TABLE_NAME, messageProjection, messageWhere,
                 null, null, null, null);
@@ -5581,10 +5629,10 @@ public class EmailProvider extends ContentProvider
                 // TODO Always use this projection?  Or what's passed in?
                 // Not sure if UI wants it, but I'm making a cursor of convo uri's
                 MatrixCursor c = new MatrixCursorWithCachedColumns(
-                        new String[] {UIProvider.ConversationColumns.URI},
+                        new String[]{UIProvider.ConversationColumns.URI},
                         mLastSequenceOps.size());
-                for (ContentProviderOperation op: mLastSequenceOps) {
-                    c.addRow(new String[] {op.getUri().toString()});
+                for (ContentProviderOperation op : mLastSequenceOps) {
+                    c.addRow(new String[]{op.getUri().toString()});
                 }
                 // Just apply the batch and we're done!
                 applyBatch(mLastSequenceOps);
@@ -5608,6 +5656,7 @@ public class EmailProvider extends ContentProvider
 
     /**
      * Notify about the Mailbox id passed in
+     *
      * @param id the Mailbox id to be notified
      */
     private void notifyUIConversationMailbox(long id) {
@@ -5627,6 +5676,7 @@ public class EmailProvider extends ContentProvider
 
     /**
      * Notify about the message id passed in
+     *
      * @param id the message id to be notified
      */
     private void notifyUIMessage(long id) {
@@ -5635,6 +5685,7 @@ public class EmailProvider extends ContentProvider
 
     /**
      * Notify about the message id passed in
+     *
      * @param id the message id to be notified
      */
     private void notifyUIMessage(String id) {
@@ -5643,6 +5694,7 @@ public class EmailProvider extends ContentProvider
 
     /**
      * Notify about the Account id passed in
+     *
      * @param id the Account id to be notified
      */
     private void notifyUIAccount(long id) {
@@ -5662,7 +5714,8 @@ public class EmailProvider extends ContentProvider
     /**
      * Notify about a folder update. Because folder changes can affect the conversation cursor's
      * extras, the conversation must also be notified here.
-     * @param folderId the folder id to be notified
+     *
+     * @param folderId  the folder id to be notified
      * @param accountId the account id to be notified (for folder list notification).
      */
     private void notifyUIFolder(final String folderId, final long accountId) {
@@ -5725,6 +5778,7 @@ public class EmailProvider extends ContentProvider
 
     /**
      * Create an android.accounts.Account object for this account.
+     *
      * @param accountId id of account to load.
      * @return an android.accounts.Account for this account, or null if we can't load it.
      */
@@ -5738,9 +5792,10 @@ public class EmailProvider extends ContentProvider
 
     /**
      * Create an android.accounts.Account object for an emailAddress/protocol pair.
-     * @param context A {@link Context}.
+     *
+     * @param context      A {@link Context}.
      * @param emailAddress The email address we're interested in.
-     * @param protocol The protocol we're intereted in.
+     * @param protocol     The protocol we're intereted in.
      * @return an {@link android.accounts.Account} for this info.
      */
     private static android.accounts.Account getAccountManagerAccount(final Context context,
@@ -5754,8 +5809,9 @@ public class EmailProvider extends ContentProvider
 
     /**
      * Update an account's periodic sync if the sync interval has changed.
+     *
      * @param accountId id for the account to update.
-     * @param values the ContentValues for this update to the account.
+     * @param values    the ContentValues for this update to the account.
      */
     private void updateAccountSyncInterval(final long accountId, final ContentValues values) {
         final Integer syncInterval = values.getAsInteger(AccountColumns.SYNC_INTERVAL);
@@ -5789,14 +5845,15 @@ public class EmailProvider extends ContentProvider
 
     /**
      * Request a sync.
-     * @param account The {@link android.accounts.Account} we want to sync.
-     * @param mailboxId The mailbox id we want to sync (or one of the special constants in
-     *                  {@link Mailbox}).
+     *
+     * @param account           The {@link android.accounts.Account} we want to sync.
+     * @param mailboxId         The mailbox id we want to sync (or one of the special constants in
+     *                          {@link Mailbox}).
      * @param deltaMessageCount If we're requesting a load more, the number of additional messages
      *                          to sync.
      */
     private static void startSync(final android.accounts.Account account, final long mailboxId,
-            final int deltaMessageCount) {
+                                  final int deltaMessageCount) {
         final Bundle extras = Mailbox.createSyncBundle(mailboxId);
         extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
         extras.putBoolean(ContentResolver.SYNC_EXTRAS_DO_NOT_RETRY, true);
@@ -5815,7 +5872,8 @@ public class EmailProvider extends ContentProvider
 
     /**
      * Request a sync.
-     * @param mailbox The {@link Mailbox} we want to sync.
+     *
+     * @param mailbox           The {@link Mailbox} we want to sync.
      * @param deltaMessageCount If we're requesting a load more, the number of additional messages
      *                          to sync.
      */
@@ -5828,6 +5886,7 @@ public class EmailProvider extends ContentProvider
 
     /**
      * Restart any push operations for an account.
+     *
      * @param account The {@link android.accounts.Account} we're interested in.
      */
     private static void restartPush(final android.accounts.Account account) {
@@ -5849,24 +5908,24 @@ public class EmailProvider extends ContentProvider
         if (mailbox != null) {
             RefreshStatusMonitor.getInstance(getContext())
                     .monitorRefreshStatus(mailbox.mId, new RefreshStatusMonitor.Callback() {
-                @Override
-                public void onRefreshCompleted(long mailboxId, int result) {
-                    // all calls to this method assumed to be started by a user action
-                    final int syncValue = UIProvider.createSyncValue(EmailContent.SYNC_STATUS_USER,
-                            result);
-                    final ContentValues values = new ContentValues();
-                    values.put(Mailbox.UI_SYNC_STATUS, UIProvider.SyncStatus.NO_SYNC);
-                    values.put(Mailbox.UI_LAST_SYNC_RESULT, syncValue);
-                    mDatabase.update(Mailbox.TABLE_NAME, values, WHERE_ID,
-                            new String[] { String.valueOf(mailboxId) });
-                    notifyUIFolder(mailbox.mId, mailbox.mAccountKey);
-                }
+                        @Override
+                        public void onRefreshCompleted(long mailboxId, int result) {
+                            // all calls to this method assumed to be started by a user action
+                            final int syncValue = UIProvider.createSyncValue(EmailContent.SYNC_STATUS_USER,
+                                    result);
+                            final ContentValues values = new ContentValues();
+                            values.put(Mailbox.UI_SYNC_STATUS, UIProvider.SyncStatus.NO_SYNC);
+                            values.put(Mailbox.UI_LAST_SYNC_RESULT, syncValue);
+                            mDatabase.update(Mailbox.TABLE_NAME, values, WHERE_ID,
+                                    new String[]{String.valueOf(mailboxId)});
+                            notifyUIFolder(mailbox.mId, mailbox.mAccountKey);
+                        }
 
-                @Override
-                public void onTimeout(long mailboxId) {
-                    // todo
-                }
-            });
+                        @Override
+                        public void onTimeout(long mailboxId) {
+                            // todo
+                        }
+                    });
             startSync(mailbox, deltaMessageCount);
         }
         return null;
@@ -5894,6 +5953,7 @@ public class EmailProvider extends ContentProvider
 
     /**
      * Returns the search mailbox for the specified account, creating one if necessary
+     *
      * @return the search mailbox for the passed in account
      */
     private Mailbox getSearchMailbox(long accountId) {
@@ -6089,8 +6149,10 @@ public class EmailProvider extends ContentProvider
         }
     }
 
-    /** Projection used for getting email address for an account. */
-    private static final String[] ACCOUNT_EMAIL_PROJECTION = { AccountColumns.EMAIL_ADDRESS };
+    /**
+     * Projection used for getting email address for an account.
+     */
+    private static final String[] ACCOUNT_EMAIL_PROJECTION = {AccountColumns.EMAIL_ADDRESS};
 
     private static void deleteAccountData(Context context, long accountId) {
         // We will delete PIM data, but by the time the asynchronous call to do that happens,
@@ -6098,7 +6160,7 @@ public class EmailProvider extends ContentProvider
         // address now and send that, rather than the account id.
         final String emailAddress = Utility.getFirstRowString(context, Account.CONTENT_URI,
                 ACCOUNT_EMAIL_PROJECTION, Account.ID_SELECTION,
-                new String[] {Long.toString(accountId)}, null, 0);
+                new String[]{Long.toString(accountId)}, null, 0);
         if (emailAddress == null) {
             LogUtils.e(TAG, "Could not find email address for account %d", accountId);
         }
@@ -6108,7 +6170,7 @@ public class EmailProvider extends ContentProvider
 
         // Delete all mailboxes.
         ContentResolver resolver = context.getContentResolver();
-        String[] accountIdArgs = new String[] { Long.toString(accountId) };
+        String[] accountIdArgs = new String[]{Long.toString(accountId)};
         resolver.delete(Mailbox.CONTENT_URI, MAILBOXES_FOR_ACCOUNT_SELECTION, accountIdArgs);
 
         // Delete account sync key.
@@ -6150,7 +6212,7 @@ public class EmailProvider extends ContentProvider
             String[][] widgetInfos = BaseWidgetProvider.getWidgetInfo(context, widgetIds);
             // widgetInfo now has pairs of account uri/folder uri
             mWidgetNotifyMailboxes.clear();
-            for (String[] widgetInfo: widgetInfos) {
+            for (String[] widgetInfo : widgetInfos) {
                 try {
                     if (widgetInfo == null || TextUtils.isEmpty(widgetInfo[1])) continue;
                     long id = Long.parseLong(Uri.parse(widgetInfo[1]).getLastPathSegment());
@@ -6165,7 +6227,7 @@ public class EmailProvider extends ContentProvider
                             case Mailbox.TYPE_INBOX:
                                 Cursor c = query(Mailbox.CONTENT_URI, Mailbox.ID_PROJECTION,
                                         MailboxColumns.TYPE + "=?",
-                                        new String[] {Integer.toString(Mailbox.TYPE_INBOX)}, null);
+                                        new String[]{Integer.toString(Mailbox.TYPE_INBOX)}, null);
                                 try {
                                     while (c.moveToNext()) {
                                         mWidgetNotifyMailboxes.add(
@@ -6189,14 +6251,14 @@ public class EmailProvider extends ContentProvider
             intent.putExtra(Utils.EXTRA_FOLDER_URI, uiUri("uifolder", mailboxId));
             intent.setType(EMAIL_APP_MIME_TYPE);
             context.sendBroadcast(intent);
-         }
+        }
     }
 
     @Override
     public void dump(FileDescriptor fd, PrintWriter writer, String[] args) {
         Context context = getContext();
         writer.println("Installed services:");
-        for (EmailServiceInfo info: EmailServiceUtils.getServiceInfoList(context)) {
+        for (EmailServiceInfo info : EmailServiceUtils.getServiceInfoList(context)) {
             writer.println("  " + info);
         }
         writer.println();
@@ -6318,7 +6380,7 @@ public class EmailProvider extends ContentProvider
      * Called throughout the application when the number of accounts has changed. This method
      * enables or disables the Compose activity, the boot receiver and the service based on
      * whether any accounts are configured.
-     *
+     * <p>
      * Blocking call - do not call from UI/lifecycle threads.
      *
      * @return true if there are any accounts configured.
@@ -6364,9 +6426,10 @@ public class EmailProvider extends ContentProvider
 
     /**
      * Starts or stops the service as necessary.
+     *
      * @param enabled If {@code true}, the service will be started. Otherwise, it will be stopped.
      * @param context The context to manage the service with.
-     * @param intent The intent of the service to be managed.
+     * @param intent  The intent of the service to be managed.
      */
     private static void startOrStopService(boolean enabled, Context context, Intent intent) {
         if (enabled) {
