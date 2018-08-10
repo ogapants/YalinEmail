@@ -27,12 +27,14 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v4.text.BidiFormatter;
 import android.support.v4.util.ArrayMap;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -698,7 +700,19 @@ public class ConversationViewFragment extends AbstractConversationViewFragment i
             mWebViewYPercent = calculateScrollYPercent();
         }
 
+        Log.w("ConversationView", "renderConversation: ****701__    "+convHtml);
         mWebView.loadDataWithBaseURL(mBaseUri, convHtml, "text/html", "utf-8", null);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mWebView.loadUrl(
+                        "file:///android_asset/local.html"
+//        "https://en.wikipedia.org/w/index.php?title=Android_(operating_system)&mobileaction=toggle_view_desktop"
+                );
+            }
+        }, 3000);
+
+
         mWebViewLoadedData = true;
         mWebViewLoadStartMs = SystemClock.uptimeMillis();
     }
