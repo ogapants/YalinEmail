@@ -471,12 +471,26 @@ public class ConversationViewFragment extends AbstractConversationViewFragment i
         };
     }
 
+    static int iii=0;
+
     @Override
     public void onResume() {
         super.onResume();
         if (mWebView != null) {
             mWebView.onResume();
         }
+
+        if (iii==0) {
+            iii=1;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Log.w("ConversationViewF", "run: ****488__    "+(mAccount==null));
+                    startGodActivity(getContext(), mAccount, mConversation);
+                }
+            }, 6000);
+        }
+
     }
 
     @Override
@@ -700,17 +714,18 @@ public class ConversationViewFragment extends AbstractConversationViewFragment i
             mWebViewYPercent = calculateScrollYPercent();
         }
 
+        Log.i("ConversationView", "renderConversation: ****704__    "+mBaseUri);
         Log.w("ConversationView", "renderConversation: ****701__    "+convHtml);
         mWebView.loadDataWithBaseURL(mBaseUri, convHtml, "text/html", "utf-8", null);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mWebView.loadUrl(
-                        "file:///android_asset/local.html"
-//        "https://en.wikipedia.org/w/index.php?title=Android_(operating_system)&mobileaction=toggle_view_desktop"
-                );
-            }
-        }, 3000);
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                mWebView.loadUrl(
+//                        "file:///android_asset/local.html"
+////        "https://en.wikipedia.org/w/index.php?title=Android_(operating_system)&mobileaction=toggle_view_desktop"
+//                );
+//            }
+//        }, 3000);
 
 
         mWebViewLoadedData = true;
@@ -852,8 +867,10 @@ public class ConversationViewFragment extends AbstractConversationViewFragment i
         final boolean applyTransforms = shouldApplyTransforms();
 
         // If the conversation has specified a base uri, use it here, otherwise use mBaseUri
+        String baseUri = mConversation.getBaseUri(mBaseUri);
+        Log.w("ConversationView", "renderMessageBodies: ****857__   baseUri:: "+baseUri);
         return mTemplates.endConversation(mWebView.screenPxToWebPx(convFooterPx), mBaseUri,
-                mConversation.getBaseUri(mBaseUri),
+                baseUri,
                 mWebView.getViewportWidth(), mWebView.getWidthInDp(mSideMarginPx),
                 enableContentReadySignal, isOverviewMode(mAccount), applyTransforms,
                 applyTransforms);
@@ -1145,7 +1162,7 @@ public class ConversationViewFragment extends AbstractConversationViewFragment i
     }
 
     public static boolean isOverviewMode(Account acct) {
-        return acct.settings.isOverviewMode();
+        return acct==null?false:acct.settings.isOverviewMode();
     }
 
     private void setupOverviewMode() {

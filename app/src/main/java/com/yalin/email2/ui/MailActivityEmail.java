@@ -17,6 +17,7 @@
 package com.yalin.email2.ui;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.UriMatcher;
 import android.database.Cursor;
@@ -27,6 +28,8 @@ import com.android.emailcommon.Logging;
 import com.android.emailcommon.TempDirectory;
 import com.android.emailcommon.provider.Mailbox;
 import com.android.emailcommon.utility.IntentUtilities;
+import com.android.mail.providers.Account;
+import com.android.mail.providers.Conversation;
 import com.android.mail.providers.Folder;
 import com.android.mail.providers.UIProvider;
 import com.android.mail.utils.LogTag;
@@ -48,6 +51,10 @@ public class MailActivityEmail extends com.android.mail.ui.MailActivity {
                 EmailProvider.LEGACY_AUTHORITY, "view/mailbox", MATCH_LEGACY_SHORTCUT_INTENT);
     }
 
+    @Override
+    public Intent getIntent(Context co, Account account, Conversation conv) {
+        return GodActivity.intent(co, account, conv);
+    }
 
     @Override
     public void onCreate(Bundle bundle) {

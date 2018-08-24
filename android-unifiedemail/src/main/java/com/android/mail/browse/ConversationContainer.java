@@ -23,6 +23,7 @@ import android.database.DataSetObserver;
 import android.graphics.Rect;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -458,6 +459,7 @@ public class ConversationContainer extends ViewGroup implements ScrollListener {
      */
     private void positionOverlays(int y, boolean postAddView) {
         mOffsetY = y;
+        Log.d("ConversationContainer", "positionOverlays: ****461__   mOffsetY: "+mOffsetY);
 
         /*
          * The scale value that WebView reports is inaccurate when measured during WebView

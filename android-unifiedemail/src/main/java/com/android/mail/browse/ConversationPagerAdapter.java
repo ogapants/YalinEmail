@@ -224,7 +224,7 @@ public class ConversationPagerAdapter extends FragmentStatePagerAdapter2
         return f;
     }
 
-    private AbstractConversationViewFragment getConversationViewFragment(Conversation c) {
+    private AbstractConversationViewFragment getConversationViewFragment(final Conversation c) {
         // if Html email bodies are already sanitized by the mail server, scripting can be enabled
         if (mServerSanitizedHtml) {
             return ConversationViewFragment.newInstance(mCommonFragmentArgs, c);

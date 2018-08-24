@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
      Copyright (C) 2011 Google Inc.
      Licensed to The Android Open Source Project.
 
@@ -63,7 +62,7 @@
         <!-- Forward -->
         <item>Forward</item>
     </string-array>
-        <!-- Formatting string for the subject when it contains a reply or forward identifier. Do not translate.-->
+    <!-- Formatting string for the subject when it contains a reply or forward identifier. Do not translate.-->
     <string name="formatted_subject" translatable="false"><xliff:g id="prefix">%1$s</xliff:g> <xliff:g id="subject">%2$s</xliff:g></string>
     <!-- Compose screen, prefixed to the subject of a message when replying to it (if not already present). Do not translate. -->
     <string name="reply_subject_label" translatable="false">Re:</string>
@@ -365,7 +364,8 @@
         <item quantity="other">Unstarring <xliff:g id="count">%1$d</xliff:g> conversations</item>
     </plurals>
 
-    <!-- The following are shown as a toast after the operation has completed --><skip />
+    <!-- The following are shown as a toast after the operation has completed -->
+    <skip />
     <plurals name="conversation_muted">
         <!-- Displayed while muting one conversation -->
         <item quantity="one">&lt;b><xliff:g id="count">%1$d</xliff:g>&lt;/b> muted</item>
@@ -466,13 +466,13 @@
          messages that are collapsed into a single touch target. Tapping on this touch target
          expands these messages. [CHAR LIMIT=UNLIMITED] -->
     <plurals name="show_messages_read">
-        <item quantity="other">Expand <xliff:g id="count" example="4">%1$d</xliff:g> older messages</item>
+        <item quantity="other">Expand <xliff:g example="4" id="count">%1$d</xliff:g> older messages</item>
     </plurals>
     <!-- Used for accessibility purposes when a conversation has several previously read
          messages that are collapsed into a single touch target to announce that the messages
          have been expanded. [CHAR LIMIT=UNLIMITED] -->
     <plurals name="super_collapsed_block_accessibility_announcement">
-        <item quantity="other">Expanded <xliff:g id="count" example="4">%1$d</xliff:g> older messages</item>
+        <item quantity="other">Expanded <xliff:g example="4" id="count">%1$d</xliff:g> older messages</item>
     </plurals>
     <!-- Shown to display the from address of the message [CHAR LIMIT=10] -->
     <string name="from_heading">From:</string>
@@ -503,7 +503,7 @@
     <!-- Displayed for one second while message is being sent [CHAR LIMIT=50]-->
     <string name="sending_message">Sending message\u2026</string>
     <!-- Displayed for one second after trying to send with invalid recipients [CHAR LIMIT=50]-->
-    <string name="invalid_recipient">The address <xliff:g id="wrongemail" example="foo@@gmail..com">%s</xliff:g> is invalid.</string>
+    <string name="invalid_recipient">The address <xliff:g example="foo@@gmail..com" id="wrongemail">%s</xliff:g> is invalid.</string>
     <!-- Shown in HTML to allow the user to see quoted text; should match Gmail web UI. [CHAR LIMIT=50] -->
     <string name="show_elided">Show quoted text</string>
     <!-- Shown in HTML to allow the user to hide quoted text; should match Gmail web UI. 25BC is Unicode for a downward-pointing triangle. [CHAR LIMIT=50] -->
@@ -566,14 +566,14 @@
     <string name="widget_large_unread_count">%d+</string>
 
     <!-- Displayed when there are >99 unseen messages, see:unseen_count [CHAR LIMIT=3] -->
-    <string name="large_unseen_count"><xliff:g id="count" example="99">%d</xliff:g>+ new</string>
+    <string name="large_unseen_count"><xliff:g example="99" id="count">%d</xliff:g>+ new</string>
 
     <!-- Displayed when there are unseen messages [CHAR LIMIT=3] [BACKUP_MESSAGE_ID: 3377106103106345367] -->
-    <string name="unseen_count"><xliff:g id="count" example="4">%d</xliff:g> new</string>
+    <string name="unseen_count"><xliff:g example="4" id="count">%d</xliff:g> new</string>
 
     <plurals name="actionbar_unread_messages">
         <!-- String for the actionbar subtitle when messages are unread [CHAR LIMIT=30] -->
-        <item quantity="other"><xliff:g id="count" example="4">%1$d</xliff:g> unread</item>
+        <item quantity="other"><xliff:g example="4" id="count">%1$d</xliff:g> unread</item>
     </plurals>
 
     <!-- Displayed at the end of the conversation list in the widget. Tapping on this will open the default Inbox. [CHAR LIMIT=35] -->
@@ -675,22 +675,22 @@
     <!-- Button text for the button to click to go to the manage storage settings screen. [CHAR LIMIT=20]-->
     <string name="storage">Storage</string>
 
-    <string translatable="false" name="hierarchical_folder_parent_top"><xliff:g id="topLevelParent">%1$s</xliff:g>\u2215<xliff:g id="parent">%2$s</xliff:g>\u2215</string>
-    <string translatable="false" name="hierarchical_folder_parent_top_ellip"><xliff:g id="topLevelParent">%1$s</xliff:g>\u2215\u2026\u2215<xliff:g id="parent">%2$s</xliff:g>\u2215</string>
-    <string translatable="false" name="hierarchical_folder_top"><xliff:g id="topLevelParent">%1$s</xliff:g>\u2215</string>
+    <string name="hierarchical_folder_parent_top" translatable="false"><xliff:g id="topLevelParent">%1$s</xliff:g>\u2215<xliff:g id="parent">%2$s</xliff:g>\u2215</string>
+    <string name="hierarchical_folder_parent_top_ellip" translatable="false"><xliff:g id="topLevelParent">%1$s</xliff:g>\u2215\u2026\u2215<xliff:g id="parent">%2$s</xliff:g>\u2215</string>
+    <string name="hierarchical_folder_top" translatable="false"><xliff:g id="topLevelParent">%1$s</xliff:g>\u2215</string>
 
     <!-- Token used as a divider between senders -->
     <string name="senders_split_token">,\u00A0</string>
     <string name="draft_count_format">\u00A0(<xliff:g id="count">%1$s</xliff:g>)</string>
 
     <!-- Token to replace senders that are not visible -->
-    <string translatable="false" name="senders_elided">..</string>
+    <string name="senders_elided" translatable="false">..</string>
     <!-- Token used to space out elided senders that are not visible -->
-    <string translatable="false" name="elided_padding_token">\u00A0</string>
+    <string name="elided_padding_token" translatable="false">\u00A0</string>
     <!-- Token used to space out message count, draft text, and senders -->
-    <string translatable="false" name="message_count_spacer">\u00A0\u00A0</string>
+    <string name="message_count_spacer" translatable="false">\u00A0\u00A0</string>
 
-    <string translatable="false" name="quote_begin">&lt;div class=\"quote\"&gt;</string>
+    <string name="quote_begin" translatable="false">&lt;div class=\"quote\"&gt;</string>
 
     <!-- String used in the FolderListFragment to mark the start of user-defined folders -->
     <string name="all_folders_heading">All folders</string>
@@ -732,10 +732,10 @@
     <!-- TODO: these pref keys that are never user visible should probably be
     moved to a donttranslate file -->
     <!-- The default auto-advance mode -->
-    <string translatable="false" name="prefDefault_autoAdvance">list</string>
+    <string name="prefDefault_autoAdvance" translatable="false">list</string>
 
     <!-- The auto-advance mode values -->
-    <string-array translatable="false" name="prefValues_autoAdvance">
+    <string-array name="prefValues_autoAdvance" translatable="false">
         <item>newer</item>
         <item>older</item>
         <item>list</item>
@@ -780,13 +780,13 @@
     <string name="notification_action_undo_delete">Deleted</string>
 
     <!-- Regex that specifies veiled addresses. These are all empty because this is disabled currently. -->
-    <string name="veiled_address"/>
+    <string name="veiled_address" />
     <!-- String to be shown instead of a veiled addresses. [CHAR LIMIT=50] -->
-    <string name="veiled_alternate_text"/>
+    <string name="veiled_alternate_text" />
     <!-- String to be shown instead of a veiled addresses. [CHAR LIMIT=50] -->
-    <string name="veiled_alternate_text_unknown_person"/>
+    <string name="veiled_alternate_text_unknown_person" />
     <!-- Summary string to be shown instead of a veiled recipient. [CHAR LIMIT=50] -->
-    <string name="veiled_summary_unknown_person"/>
+    <string name="veiled_summary_unknown_person" />
 
     <!-- Notification ticker text for per-label notification [CHAR LIMIT=30]-->
     <string name="label_notification_ticker">"<xliff:g id="label">%s</xliff:g>: <xliff:g id="notification">%s</xliff:g>"</string>
@@ -815,14 +815,14 @@
         <item>Archive</item>
         <item>Delete</item>
     </string-array>
-    <string-array translatable="false" name="prefValues_removal_action">
+    <string-array name="prefValues_removal_action" translatable="false">
         <item>archive</item>
         <item>delete</item>
     </string-array>
     <!-- Dialog title for the choosing whether to use archive or delete as remove action [CHAR LIMIT=150] -->
     <string name="prefDialogTitle_removal_action">Default action</string>
     <!-- The default value -->
-    <string translatable="false" name="prefDefault_removal_action">archive</string>
+    <string name="prefDefault_removal_action" translatable="false">archive</string>
 
     <!--  Settings screen, Reply to all default setting title  [CHAR LIMIT=30] -->
     <string name="preferences_default_reply_all_title">Reply all</string>
@@ -901,8 +901,7 @@
     <!-- Text of dialog to turn auto-sync on [CHAR LIMIT=500] -->
     <string name="turn_auto_sync_on_dialog_body">Changes you make to
     all apps and accounts, not just Gmail, will be synchronized
-    between the web, your other devices, and your <xliff:g
-    id="phone_or_tablet">%1$s</xliff:g>.</string>
+    between the web, your other devices, and your <xliff:g id="phone_or_tablet">%1$s</xliff:g>.</string>
 
     <!-- Phone (vs. tablet) for describing this device [CHAR LIMIT=30] -->
     <string name="phone">phone</string>
@@ -1026,10 +1025,10 @@
     <string name="feedback">Send feedback</string>
 
     <!-- Copyright text [CHAR LIMIT=50] -->
-    <string name="copyright">&#169;<xliff:g id="year" example="2010">%1$d</xliff:g> Google Inc.</string>
+    <string name="copyright">&#169;<xliff:g example="2010" id="year">%1$d</xliff:g> Google Inc.</string>
 
     <!-- Version text [CHAR LIMIT=50] -->
-    <string name="version"><xliff:g id="app_name" example="Email">%1$s</xliff:g> version <xliff:g id="version" example="2.2.1">%2$s</xliff:g></string>
+    <string name="version"><xliff:g example="Email" id="app_name">%1$s</xliff:g> version <xliff:g example="2.2.1" id="version">%2$s</xliff:g></string>
 
     <!-- Menu item: view a webpage about this application [CHAR LIMIT=50]; this MUST be overlayed -->
     <string name="view_app_page"></string>
@@ -1125,7 +1124,7 @@
     </string-array>
 
     <!-- The snap header values -->
-    <string-array translatable="false" name="prefValues_snapHeader">
+    <string-array name="prefValues_snapHeader" translatable="false">
         <item>always</item>
         <item>portrait</item>
         <item>never</item>

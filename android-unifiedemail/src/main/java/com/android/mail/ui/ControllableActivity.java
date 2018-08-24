@@ -18,11 +18,14 @@
 package com.android.mail.ui;
 
 import android.content.ContentResolver;
+import android.content.Context;
+import android.content.Intent;
 
 import com.android.bitmap.BitmapCache;
 import com.android.mail.bitmap.ContactResolver;
 import com.android.mail.browse.ConversationListFooterView;
 import com.android.mail.providers.Account;
+import com.android.mail.providers.Conversation;
 import com.android.mail.providers.Folder;
 
 /**
@@ -31,6 +34,8 @@ import com.android.mail.providers.Folder;
  */
 public interface ControllableActivity extends RestrictedActivity,
         UndoListener, AnimatedAdapter.Listener, ConversationListFooterView.FooterViewClickListener {
+
+    Intent getIntent(Context context, Account account, Conversation conv);
     /**
      * Returns the ViewMode the activity is updating.
      * @see com.android.mail.ui.ViewMode

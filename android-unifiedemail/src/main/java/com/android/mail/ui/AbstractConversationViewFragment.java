@@ -27,6 +27,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -261,6 +262,7 @@ public abstract class AbstractConversationViewFragment extends Fragment implemen
     protected void parseArguments() {
         final Bundle args = getArguments();
         mAccount = args.getParcelable(ARG_ACCOUNT);
+        Log.w("AbstractConvViewF", "parseArguments: ****264__    "+(mAccount==null));
         mConversation = args.getParcelable(ARG_CONVERSATION);
     }
 
@@ -305,6 +307,10 @@ public abstract class AbstractConversationViewFragment extends Fragment implemen
         mWebViewClient.setActivity(activity);
         mAccount = mAccountObserver.initialize(mActivity.getAccountController());
         mWebViewClient.setAccount(mAccount);
+    }
+
+    public void startGodActivity(Context context, Account account, Conversation parcelable) {
+        startActivity(mActivity.getIntent(context,account,parcelable));
     }
 
     @Override

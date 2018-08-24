@@ -36,6 +36,7 @@ import com.android.bitmap.BitmapCache;
 import com.android.mail.R;
 import com.android.mail.bitmap.ContactResolver;
 import com.android.mail.providers.Account;
+import com.android.mail.providers.Conversation;
 import com.android.mail.providers.Folder;
 import com.android.mail.providers.FolderWatcher;
 import com.android.mail.utils.LogTag;
@@ -307,6 +308,11 @@ public class FolderSelectionActivity extends ActionBarActivity implements OnClic
     @Override
     public Context getActivityContext() {
         return this;
+    }
+
+    @Override
+    public Intent getIntent(Context context, Account account, Conversation conv) {
+        return null;
     }
 
     @Override

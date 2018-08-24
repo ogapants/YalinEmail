@@ -30,6 +30,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,6 +45,7 @@ import com.android.mail.analytics.AnalyticsTimer;
 import com.android.mail.bitmap.ContactResolver;
 import com.android.mail.compose.ComposeActivity;
 import com.android.mail.providers.Account;
+import com.android.mail.providers.Conversation;
 import com.android.mail.providers.Folder;
 import com.android.mail.providers.SearchRecentSuggestionsProvider;
 import com.android.mail.providers.SuggestionsProvider;
@@ -138,6 +140,11 @@ public class MailActivity extends AbstractMailActivity implements ControllableAc
         return super.dispatchTouchEvent(ev);
     }
 
+    @Override
+    public Intent getIntent(Context co,Account account, Conversation conv) {
+        return null;
+    }
+
     /**
      * Default implementation returns a null view mode.
      */
@@ -183,7 +190,12 @@ public class MailActivity extends AbstractMailActivity implements ControllableAc
             mController.addConversationListLayoutListener(mCustomViewToolbar);
         }
 
+        try{
+
         setSupportActionBar(toolbar);
+        }catch (IllegalStateException e){
+            Log.e("MailActivity", e.getMessage());
+        }
         toolbar.setNavigationOnClickListener(mController.getNavigationViewClickListener());
 
         final ActionBar actionBar = getSupportActionBar();
