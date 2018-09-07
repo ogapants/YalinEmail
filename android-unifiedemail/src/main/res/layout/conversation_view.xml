@@ -17,7 +17,7 @@
 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:foreground="@color/letter_tile_default_color"
+    android:foreground="#33f48fb1"
     android:layout_height="match_parent">
 
     <com.android.mail.browse.ConversationContainer
