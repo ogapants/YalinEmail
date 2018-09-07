@@ -19,6 +19,8 @@ package com.yalin.email;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
+import android.webkit.WebView;
 
 import com.android.mail.browse.ConversationMessage;
 import com.android.mail.browse.InlineAttachmentViewIntentBuilder;
@@ -30,6 +32,7 @@ import com.android.mail.preferences.PreferenceMigratorHolder.PreferenceMigratorC
 import com.android.mail.providers.Account;
 import com.android.mail.ui.settings.PublicPreferenceActivity;
 import com.android.mail.utils.LogTag;
+import com.facebook.stetho.Stetho;
 import com.yalin.email.activity.setup.EmailPreferenceActivity;
 import com.yalin.email.preferences.EmailPreferenceMigrator;
 
@@ -70,5 +73,16 @@ public class EmailApplication extends Application {
                         return EmailNotificationController.getInstance(context);
                     }
                 });
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        Stetho.initializeWithDefaults(this);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            WebView.setWebContentsDebuggingEnabled(true);
+        }
     }
 }
