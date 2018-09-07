@@ -129,11 +129,11 @@ public class Utils {
             new SimpleTimer(ENABLE_CONV_LOAD_TIMER).withSessionName("ConvLoadTimer");
 
     public static boolean isRunningJellybeanOrLater() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
+        return true;//Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
     }
 
     public static boolean isRunningJBMR1OrLater() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1;
+        return true;//Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1;
     }
 
     public static boolean isRunningKitkatOrLater() {

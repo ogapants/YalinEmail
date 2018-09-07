@@ -19,8 +19,6 @@ package com.android.mail.browse;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
@@ -32,110 +30,110 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 public class ConversationWebView extends MailWebView implements ScrollNotifier {
-    /** The initial delay when rendering in hardware layer. */
-    private final int mWebviewInitialDelay;
+//    /** The initial delay when rendering in hardware layer. */
+//    private final int mWebviewInitialDelay;
 
-    private Bitmap mBitmap;
-    private Canvas mCanvas;
+//    private Bitmap mBitmap;
+//    private Canvas mCanvas;
 
-    private boolean mUseSoftwareLayer;
-    /**
-     * Whether this view is user-visible; we don't bother doing supplemental software drawing
-     * if the view is off-screen.
-     */
-    private boolean mVisible;
+//    private boolean mUseSoftwareLayer;
+//    /**
+//     * Whether this view is user-visible; we don't bother doing supplemental software drawing
+//     * if the view is off-screen.
+//     */
+//    private boolean mVisible;
 
-    /** {@link Runnable} to be run when the page is rendered in hardware layer. */
-    private final Runnable mNotifyPageRenderedInHardwareLayer = new Runnable() {
-        @Override
-        public void run() {
-            // Switch to hardware layer.
-            mUseSoftwareLayer = false;
-            destroyBitmap();
-            invalidate();
-        }
-    };
+//    /** {@link Runnable} to be run when the page is rendered in hardware layer. */
+//    private final Runnable mNotifyPageRenderedInHardwareLayer = new Runnable() {
+//        @Override
+//        public void run() {
+//            // Switch to hardware layer.
+//            mUseSoftwareLayer = false;
+//            destroyBitmap();
+//            invalidate();
+//        }
+//    };
 
-    @Override
-    public void onDraw(Canvas canvas) {
-        // Always render in hardware layer to avoid flicker when switch.
-        super.onDraw(canvas);
-
+//    @Override
+//    public void onDraw(Canvas canvas) {
+//        // Always render in hardware layer to avoid flicker when switch.
+//        super.onDraw(canvas);
+//
         // Render in software layer on top if needed, and we're visible (i.e. it's worthwhile to
         // do all this)
-        if (mUseSoftwareLayer && mVisible && getWidth() > 0 && getHeight() > 0) {
-            if (mBitmap == null) {
-                try {
-                    // Create an offscreen bitmap.
-                    mBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.RGB_565);
-                    mCanvas = new Canvas(mBitmap);
-                } catch (OutOfMemoryError e) {
-                    // just give up
-                    mBitmap = null;
-                    mCanvas = null;
-                    mUseSoftwareLayer = false;
-                }
-            }
+//        if (mUseSoftwareLayer && mVisible && getWidth() > 0 && getHeight() > 0) {
+//            if (mBitmap == null) {
+//                try {
+//                    // Create an offscreen bitmap.
+//                    mBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.RGB_565);
+//                    mCanvas = new Canvas(mBitmap);
+//                } catch (OutOfMemoryError e) {
+//                    // just give up
+//                    mBitmap = null;
+//                    mCanvas = null;
+//                    //mUseSoftwareLayer = false;
+//                }
+//            }
+//
+//            if (mBitmap != null) {
+//                final int x = getScrollX();
+//                final int y = getScrollY();
+//
+//                mCanvas.save();
+//                mCanvas.translate(-x, -y);
+//                super.onDraw(mCanvas);
+//                mCanvas.restore();
+//
+//                canvas.drawBitmap(mBitmap, x, y, null /* paint */);
+//            }
+//        }
+//    }
 
-            if (mBitmap != null) {
-                final int x = getScrollX();
-                final int y = getScrollY();
+//    @Override
+//    public void destroy() {
+//        destroyBitmap();
+//        removeCallbacks(mNotifyPageRenderedInHardwareLayer);
+//
+//        super.destroy();
+//    }
 
-                mCanvas.save();
-                mCanvas.translate(-x, -y);
-                super.onDraw(mCanvas);
-                mCanvas.restore();
+//    /**
+//     * Destroys the {@link Bitmap} used for software layer.
+//     */
+//    private void destroyBitmap() {
+//        if (mBitmap != null) {
+//            mBitmap = null;
+//            mCanvas = null;
+//        }
+//    }
 
-                canvas.drawBitmap(mBitmap, x, y, null /* paint */);
-            }
-        }
-    }
+//    /**
+//     * Enable this WebView to also draw to an internal software canvas until
+//     * {@link #onRenderComplete()} is called. The software draw will happen every time
+//     * a normal {@link #onDraw(Canvas)} happens, and will overwrite whatever is normally drawn
+//     * (i.e. drawn in hardware) with the results of software rendering.
+//     * <p>
+//     * This is useful when you know that the WebView draws sooner to a software layer than it does
+//     * to its normal hardware layer.
+//     */
+//    public void setUseSoftwareLayer(boolean useSoftware) {
+//        mUseSoftwareLayer = useSoftware;
+//    }
 
-    @Override
-    public void destroy() {
-        destroyBitmap();
-        removeCallbacks(mNotifyPageRenderedInHardwareLayer);
+//    /**
+//     * Notifies the {@link ConversationWebView} that it has become visible. It can use this signal
+//     * to switch between software and hardware layer.
+//     */
+//    public void onRenderComplete() {
+//        if (mUseSoftwareLayer) {
+//            // Schedule to switch from software layer to hardware layer in 1s.
+//            postDelayed(mNotifyPageRenderedInHardwareLayer, mWebviewInitialDelay);
+//        }
+//    }
 
-        super.destroy();
-    }
-
-    /**
-     * Destroys the {@link Bitmap} used for software layer.
-     */
-    private void destroyBitmap() {
-        if (mBitmap != null) {
-            mBitmap = null;
-            mCanvas = null;
-        }
-    }
-
-    /**
-     * Enable this WebView to also draw to an internal software canvas until
-     * {@link #onRenderComplete()} is called. The software draw will happen every time
-     * a normal {@link #onDraw(Canvas)} happens, and will overwrite whatever is normally drawn
-     * (i.e. drawn in hardware) with the results of software rendering.
-     * <p>
-     * This is useful when you know that the WebView draws sooner to a software layer than it does
-     * to its normal hardware layer.
-     */
-    public void setUseSoftwareLayer(boolean useSoftware) {
-        mUseSoftwareLayer = useSoftware;
-    }
-
-    /**
-     * Notifies the {@link ConversationWebView} that it has become visible. It can use this signal
-     * to switch between software and hardware layer.
-     */
-    public void onRenderComplete() {
-        if (mUseSoftwareLayer) {
-            // Schedule to switch from software layer to hardware layer in 1s.
-            postDelayed(mNotifyPageRenderedInHardwareLayer, mWebviewInitialDelay);
-        }
-    }
-
-    public void onUserVisibilityChanged(boolean visible) {
-        mVisible = visible;
-    }
+//    public void onUserVisibilityChanged(boolean visible) {
+//        mVisible = visible;
+//    }
 
     private final int mViewportWidth;
     private final float mDensity;
@@ -161,7 +159,7 @@ public class ConversationWebView extends MailWebView implements ScrollNotifier {
 
         final Resources r = getResources();
         mViewportWidth = r.getInteger(R.integer.conversation_webview_viewport_px);
-        mWebviewInitialDelay = r.getInteger(R.integer.webview_initial_delay);
+//        mWebviewInitialDelay = r.getInteger(R.integer.webview_initial_delay);
         mDensity = r.getDisplayMetrics().density;
     }
 

@@ -27,7 +27,6 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
@@ -228,7 +227,7 @@ public class ConversationViewFragment extends AbstractConversationViewFragment i
             if (isUserVisible()) {
                 onConversationSeen();
             }
-            mWebView.onRenderComplete();
+//            mWebView.onRenderComplete();
         }
     };
 
@@ -413,11 +412,11 @@ public class ConversationViewFragment extends AbstractConversationViewFragment i
         // content is loaded and ready to draw, since WebView delays firing this event until the
         // layers are composited and everything is ready to draw.
         // This signal does not seem to be reliable, so just use the old method for now.
-        final boolean isJBOrLater = Utils.isRunningJellybeanOrLater();
+        final boolean isJBOrLater = true;//Utils.isRunningJellybeanOrLater();
         final boolean isUserVisible = isUserVisible();
-        mWebView.setUseSoftwareLayer(!isJBOrLater);
-        mEnableContentReadySignal = isJBOrLater && isUserVisible;
-        mWebView.onUserVisibilityChanged(isUserVisible);
+//        mWebView.setUseSoftwareLayer(!isJBOrLater);
+        mEnableContentReadySignal = isUserVisible;//isJBOrLater && isUserVisible;
+//        mWebView.onUserVisibilityChanged(isUserVisible);
         mWebView.setWebViewClient(mWebViewClient);
         final WebChromeClient wcc = new WebChromeClient() {
             @Override
@@ -592,9 +591,9 @@ public class ConversationViewFragment extends AbstractConversationViewFragment i
             }
         }
 
-        if (mWebView != null) {
-            mWebView.onUserVisibilityChanged(userVisible);
-        }
+//        if (mWebView != null) {
+//            mWebView.onUserVisibilityChanged(userVisible);
+//        }
     }
 
     /**
@@ -702,15 +701,15 @@ public class ConversationViewFragment extends AbstractConversationViewFragment i
 
         Log.w("ConversationView", "renderConversation: ****701__    "+convHtml);
         mWebView.loadDataWithBaseURL(mBaseUri, convHtml, "text/html", "utf-8", null);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mWebView.loadUrl(
-                        "file:///android_asset/local.html"
-//        "https://en.wikipedia.org/w/index.php?title=Android_(operating_system)&mobileaction=toggle_view_desktop"
-                );
-            }
-        }, 3000);
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                mWebView.loadUrl(
+//                        "file:///android_asset/local.html"
+////        "https://en.wikipedia.org/w/index.php?title=Android_(operating_system)&mobileaction=toggle_view_desktop"
+//                );
+//            }
+//        }, 3000);
 
 
         mWebViewLoadedData = true;
