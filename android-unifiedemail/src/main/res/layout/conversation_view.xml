@@ -32,7 +32,7 @@
             android:layout_height="match_parent"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:scrollbars="none"
+            android:scrollbars="vertical"
             style="@style/ConversationViewPaddingStyle" />
 
         <!-- scrolling overlay views go here -->
@@ -53,6 +53,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbarStyle="outsideOverlay"
+        android:visibility="gone"
         android:scrollbars="vertical|horizontal" />
 
     <include layout="@layout/conversation_load_spinner"/>
